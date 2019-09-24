@@ -1,26 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import PropTypes from 'prop-types'
+import styled from 'styled-components';
+import PrivateComponent from './components/private';
+import PublicComponent from './components/public';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks'
 
-function App() {
+export const client = new ApolloClient({
+  uri: 'http://localhost:4000/playground'
+})
+
+
+const Container = styled.div``
+
+class AppContainer extends React.Component {
+  state = {
+    isLoggedIn: localStorage.getItem('token') ? true : false
+  }
+  render() {
+    const { isLoggedIn } = this.state
+    return <ApolloProvider client={client}>
+      <App isLoggedIn={isLoggedIn} />
+    </ApolloProvider>
+  }
+}
+
+
+
+function App(props) {
+  const { isLoggedIn } = props;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      {isLoggedIn ? <PrivateComponent /> : <PublicComponent />}
+    </Container>
   );
 }
 
-export default App;
+App.propTypes = {
+  isLoggedIn: PropTypes.bool.isRequired
+}
+
+export default AppContainer;
