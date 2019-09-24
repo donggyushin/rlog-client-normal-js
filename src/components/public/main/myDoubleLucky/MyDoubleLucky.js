@@ -13,11 +13,13 @@ const Container = styled.div`
 const PhotoContainer = styled.div`
     width:424px;
     position: relative;
+    user-select:none;
 `
 
 const Photo = styled.img`
     width:100%;
     border-radius: 7px;
+    user-select:none;
 `
 
 const WhiteText = styled.div`
@@ -31,6 +33,7 @@ const WhiteText = styled.div`
     color:white;
     font-size: 32px;
     text-shadow: 7px 5px 3px rgba(7,3,2,0.56);
+    user-select:none;
 `
 
 class MyDoubleLucky extends React.Component {

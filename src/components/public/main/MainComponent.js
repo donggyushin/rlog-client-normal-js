@@ -12,16 +12,11 @@ const Container = styled.div`
     position: relative;
 `
 
-const TitleLogo = styled.h1`
-    margin-left: 33px;
-    margin-top: -27px;
-`
 
 class PublicMainComponent extends React.Component {
     render() {
         return <Container>
             <NavigationBar />
-            <TitleLogo>R log</TitleLogo>
             <MyDoubleLucky />
             <Copyright />
         </Container>

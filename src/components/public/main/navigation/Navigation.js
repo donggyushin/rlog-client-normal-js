@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
     display: flex;
     align-items: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    height:7vh;
     justify-content: flex-end;
     z-index:1;
+    position: relative;
 `
 
 const ButtonContainer = styled.div`
@@ -45,12 +46,30 @@ const SignUpButton = styled.button`
     }
 `
 
+const TitleLogo = styled.h1`
+    margin-left: 33px;
+    position: absolute;
+    left: 20px;
+    top: -2px;
+    cursor: pointer;
+    color:black;
+`
+
+
+
 class NavigationBar extends React.Component {
     render() {
         return <Container>
+            <Link to={'/love-u'}>
+                <TitleLogo>R log</TitleLogo>
+            </Link>
             <ButtonContainer>
-                <SignInButton>Sign In</SignInButton>
-                <SignUpButton>Sign Up</SignUpButton>
+                <Link to={'/signin'}>
+                    <SignInButton>Sign In</SignInButton>
+                </Link>
+                <Link to={'/signup'}>
+                    <SignUpButton>Sign Up</SignUpButton>
+                </Link>
             </ButtonContainer>
         </Container>
     }
