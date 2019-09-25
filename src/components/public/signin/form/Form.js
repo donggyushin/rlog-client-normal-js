@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types'
 
+
 const Container = styled.div`
     width:50%;
     display:flex;
@@ -35,7 +36,9 @@ const Button = styled.button`
     padding-bottom: 4px;
     font-size: 14px;
     cursor: pointer;
+    z-index: 1;
 `
+
 
 class FormComponent extends React.Component {
     render() {
@@ -45,7 +48,8 @@ class FormComponent extends React.Component {
             checkPassword,
             phone,
             email,
-            handleInput
+            handleInput,
+            submitButtonClicked
         } = this.props;
         return <Container>
             <InputComponent placeholder={'e.g) shin donggyu'} name={'name'} onChange={handleInput} value={name} />
@@ -53,9 +57,10 @@ class FormComponent extends React.Component {
             <InputComponent placeholder={'e.g) ************'} name={'checkPassword'} type={'password'} onChange={handleInput} value={checkPassword} />
             <InputComponent placeholder={'e.g) 01093201234'} name={'phone'} onChange={handleInput} value={phone} />
             <InputComponent placeholder={'nyaconnected@gmail.com'} name={'email'} onChange={handleInput} value={email} />
-            <Button>Submit</Button>
+            <Button onClick={submitButtonClicked}>Submit</Button>
         </Container>
     }
+
 }
 
 FormComponent.propTypes = {
