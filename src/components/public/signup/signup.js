@@ -4,6 +4,18 @@ import NavigationBar from '../main/navigation';
 import Copyright from '../main/copyright';
 import LabelComponent from './label';
 import FormComponent from './form';
+import { gql } from 'apollo-boost'
+import { graphql } from 'react-apollo'
+import { compose } from 'redux'
+
+const loginMutation = gql`
+mutation($email:String!, $password:String!) {
+    login(email:$email, password:$password){
+      jwt
+    }
+  }
+`
+
 
 const Container = styled.div`
     display:flex;
@@ -24,15 +36,40 @@ class SignUpComponent extends React.Component {
     }
     render() {
         const { email, password } = this.state
-        const { handleInput } = this;
+        const { handleInput, submitButtonClicked } = this;
         return <Container>
             <NavigationBar />
             <LabelAndFormComponentsContainer>
                 <LabelComponent email={email} password={password} />
-                <FormComponent handleInput={handleInput} email={email} password={password} />
+                <FormComponent submitButtonClicked={submitButtonClicked} handleInput={handleInput} email={email} password={password} />
             </LabelAndFormComponentsContainer>
             <Copyright />
         </Container>
+    }
+
+    submitButtonClicked = () => {
+        const { email, password } = this.state;
+        const { loginMutation } = this.props;
+        const variables = {
+            email,
+            password
+        }
+        loginMutation({
+            variables
+        })
+            .then(res => res.data.login)
+            .then(result => {
+                console.log(result)
+                if (result.jwt === 'Not verified') {
+                    alert('Not verified account')
+                } else {
+                    localStorage.setItem('jwt', result.jwt)
+                    window.location.href = '/'
+                }
+            })
+            .catch(err => {
+                alert(err.message)
+            })
     }
 
     handleInput = e => {
@@ -42,4 +79,6 @@ class SignUpComponent extends React.Component {
     }
 }
 
-export default SignUpComponent
+export default compose(
+    graphql(loginMutation, { name: 'loginMutation' })
+)(SignUpComponent)

@@ -42,12 +42,13 @@ class FormComponent extends React.Component {
         const {
             handleInput,
             email,
-            password
+            password,
+            submitButtonClicked
         } = this.props;
         return <Container>
             <InputComponent onChange={handleInput} value={email} placeholder={'e.g) nyaconnected@gmail.com'} name={'email'} />
             <InputComponent onChange={handleInput} type={'password'} value={password} placeholder={'e.g) ************'} name={'password'} />
-            <Button>Submit</Button>
+            <Button onClick={submitButtonClicked}>Submit</Button>
         </Container>
     }
 }
