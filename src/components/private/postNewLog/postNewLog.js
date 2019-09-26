@@ -4,6 +4,8 @@ import EditorJs from '@editorjs/editorjs';
 import Header from '@editorjs/header'
 import Embed from '@editorjs/embed'
 import ImageTool from '@editorjs/image'
+import TitleComponent from './title';
+import BackButton from './backButton';
 
 let editor
 
@@ -73,6 +75,8 @@ class PostNewLog extends React.Component {
             return "loading...."
         } else {
             return <Container>
+                <BackButton to={'/'} />
+                <TitleComponent />
                 <Editor id={'editorjs'} />
                 <Button onClick={submitButtonClicked}>Submit</Button>
             </Container>
