@@ -6,6 +6,12 @@ import Embed from '@editorjs/embed'
 import ImageTool from '@editorjs/image'
 import TitleComponent from './title';
 import BackButton from './backButton';
+import dotenv from 'dotenv';
+import axios from 'axios'
+
+dotenv.config();
+
+
 
 let editor
 
@@ -53,10 +59,43 @@ class PostNewLog extends React.Component {
                     config: {
                         uploader: {
                             uploadByFile(file) {
-                                console.log(file)
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                formData.append('upload_preset', 'ndp6lsvf');
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false);
+                                xhr.send(formData);
+                                const imageResponse = JSON.parse(xhr.responseText);
+
+                                return {
+                                    success: 1,
+                                    file: {
+                                        url: imageResponse.secure_url
+                                    }
+                                }
                             },
                             uploadByUrl(url) {
-                                console.log(url)
+                                return fetch(url)
+                                    .then(res => res.blob())
+                                    .then(blob => {
+                                        blob.lastModifiedDate = new Date();
+                                        blob.name = 'imageFromUrl'
+                                        let file = blob
+                                        const formData = new FormData();
+                                        formData.append('file', file)
+                                        formData.append('upload_preset', 'ndp6lsvf')
+                                        const xhr = new XMLHttpRequest();
+                                        xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false);
+                                        xhr.send(formData);
+                                        const imageResponse = JSON.parse(xhr.responseText);
+                                        console.log('image response:', imageResponse)
+                                        return {
+                                            success: 1,
+                                            file: {
+                                                url: imageResponse.secure_url
+                                            }
+                                        }
+                                    })
                             }
                         }
                     }
