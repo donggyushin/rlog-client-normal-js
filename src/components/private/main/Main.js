@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import LogsComponent from './logs';
 import NavigationBar from './navigation';
 
+
 const Container = styled.div`
     width:100%;
     min-height:100vh;

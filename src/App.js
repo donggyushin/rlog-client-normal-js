@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import styled from 'styled-components';
-import PrivateComponent from './components/private';
-import PublicComponent from './components/public';
+import PrivateComponent from 'components/private';
+import PublicComponent from 'components/public';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks'
 
