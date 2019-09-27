@@ -78,23 +78,24 @@ class TitleComponent extends React.Component {
         file: null
     }
     render() {
-        const { title, titleImage, file } = this.state;
-        const { handleInput, TitleImageUploadButtonClicked, TitleImageDeleteButtonClicked } = this;
+        // const { title, titleImage, file } = this.state;
+        const { title, imageFile, handleInput, titleImageUploadButtonClicked, titleImageDeleteButtonClicked } = this.props;
+        const { TitleImageDeleteButtonClicked } = this;
         return <Container>
             <TitleImageContainer>
-                {file && <TitleImage src={file} />}
-                <Title file={file} onChange={handleInput} name={'title'} value={title} />
-                <ImageUploadButton onChange={TitleImageUploadButtonClicked} accept="image/*" type={'file'} />
-                <ImageUploadIcon file={file} className={'fas fa-plus'} />
-                {file && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
+                {imageFile && <TitleImage src={imageFile} />}
+                <Title file={imageFile} onChange={handleInput} name={'title'} value={title} />
+                <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />
+                <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />
+                {imageFile && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
             </TitleImageContainer>
         </Container>
     }
 
     TitleImageDeleteButtonClicked = () => {
-        this.setState({
-            file: null
-        })
+        const { titleImageDeleteButtonClicked } = this.props;
+        titleImageDeleteButtonClicked();
+        document.getElementById("ImageUploadButton").value = "";
     }
 
     TitleImageUploadButtonClicked = e => {
