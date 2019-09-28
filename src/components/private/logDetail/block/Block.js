@@ -45,6 +45,57 @@ const HeaderContainer = styled.div`
     margin-bottom:20px;
 `
 
+const EmbedLinkContainer = styled.a`
+    width:650px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top:30px;
+    padding-bottom:20px;
+    background:#fff;
+    border: 1px solid rgba(201, 201, 204, 0.48);
+    box-shadow: 0 1px 3px rgba(0,0,0, .1);
+    border-radius: 6px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    position: relative;
+    text-decoration:none;
+    color:black;
+    margin-bottom:30px;
+`
+
+const LinkTitle = styled.div`
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5em;
+    margin: 0 0 10px 0;
+`
+
+const LinkDesc = styled.div`
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.55em;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    width:82%;
+    max-height:80px;
+`
+
+const LinkImage = styled.img`
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0 0 0 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 3px;
+    position:absolute;
+    top:30px;
+    right:30px;
+`
+
 class Block extends React.Component {
 
     render() {
@@ -66,6 +117,17 @@ class Block extends React.Component {
                     </CaptionText>
                 </Caption>
 
+            </>}
+            {(block.type === 'linkTool') && <>
+                <EmbedLinkContainer target={'_blank'} href={block.data.link}>
+                    <LinkTitle>
+                        {block.data.meta.title}
+                    </LinkTitle>
+                    <LinkDesc>
+                        {block.data.meta.description}
+                    </LinkDesc>
+                    {block.data.meta.image.url && <LinkImage src={block.data.meta.image.url} />}
+                </EmbedLinkContainer>
             </>}
             {block.type === 'paragraph' && <>
                 <NormalText>

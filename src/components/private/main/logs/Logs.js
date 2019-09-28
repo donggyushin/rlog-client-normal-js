@@ -20,8 +20,15 @@ query MyLogs(
 `
 
 const Container = styled.div`
-    width:80%;
-    display:flex;
+    /* width:80%;
+    display:flex; */
+    width: 88%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 1267px;
 
 `
 

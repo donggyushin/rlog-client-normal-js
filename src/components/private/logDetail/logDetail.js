@@ -19,6 +19,14 @@ query Log($id:ID!){
           id
           type
           data {
+            meta {
+                title
+                description
+                image {
+                    url
+                }
+            }
+            link,
             text,
             file {
               url

@@ -11,6 +11,7 @@ import { decodeToken } from 'utils/decodeToken'
 import { gql } from 'apollo-boost'
 import { graphql } from 'react-apollo'
 import { compose } from 'redux';
+import LinkTool from '@editorjs/link'
 
 import axios from 'axios'
 
@@ -45,8 +46,14 @@ mutation($logId:String!,
     $width:Int,
     $level:Int,
     $withBackground:Boolean,
-    $withBorder:Boolean) {
-    addBlock(logId:$logId,withBackground:$withBackground, withBorder:$withBorder ,type:$type, text:$text, imageUrl:$imageUrl, stretched:$stretched, caption:$caption, embed:$embed, height:$height, service:$service, source:$source, width:$width, level:$level){
+    $withBorder:Boolean,
+    $link:String, 
+    $title :String,
+    $description :String,
+    $image :String
+    ) {
+    addBlock(link:$link, title:$title, description:$description, image:$image,
+        logId:$logId,withBackground:$withBackground, withBorder:$withBorder ,type:$type, text:$text, imageUrl:$imageUrl, stretched:$stretched, caption:$caption, embed:$embed, height:$height, service:$service, source:$source, width:$width, level:$level){
       id
       type
       logId
@@ -83,6 +90,12 @@ class PostNewLog extends React.Component {
         editor = new EditorJs({
             holderId: 'editorjs',
             tools: {
+                linkTool: {
+                    class: LinkTool,
+                    config: {
+                        endpoint: 'http://localhost:4000/api/fetchUrl'
+                    }
+                },
                 header: {
                     class: Header,
                     inlineToolbar: ['link']
@@ -259,6 +272,22 @@ class PostNewLog extends React.Component {
                             await addBlock({
                                 variables
                             })
+                        } else if (block.type === "linkTool") {
+                            const { link } = block.data;
+                            const { description, title } = block.data.meta;
+                            const { url } = block.data.meta.image;
+                            const variables = {
+                                logId,
+                                type: "linkTool",
+                                link,
+                                title,
+                                description,
+                                image: url
+                            }
+                            await addBlock({
+                                variables
+                            })
+
                         } else if (block.type === 'embed') {
                             const { service, source, embed, caption, height, width } = block.data;
                             const variables = {
@@ -276,7 +305,7 @@ class PostNewLog extends React.Component {
                             })
                         }
                     })
-                    window.location.href = "/"
+                    // window.location.href = "/"
                 })
             })
             .catch(err => console.error(err))
