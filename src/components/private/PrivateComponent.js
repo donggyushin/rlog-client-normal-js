@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import MainComponent from './main';
 import PostNewLog from './postNewLog';
+import LogDetail from './logDetail';
 
 class PrivateComponent extends React.Component {
     render() {
@@ -10,6 +11,7 @@ class PrivateComponent extends React.Component {
             <Switch>
                 <Route path={'/'} exact component={MainComponent} />
                 <Route path={'/post'} exact component={PostNewLog} />
+                <Route path={'/log/:logId'} exact component={LogDetail} />
                 <Route component={MainComponent} />
             </Switch>
         </Router>

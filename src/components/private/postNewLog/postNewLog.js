@@ -31,6 +31,35 @@ mutation($title:String!, $userId:String!, $image:String, $time:String) {
   }
 `
 
+const addBlock = gql`
+mutation($logId:String!,
+    $type:String,
+    $text:String,
+    $imageUrl:String,
+    $stretched:Boolean,
+    $caption:String,
+    $embed:String,
+    $height:Int,
+    $service:String,
+    $source:String,
+    $width:Int,
+    $level:Int,
+    $withBackground:Boolean,
+    $withBorder:Boolean) {
+    addBlock(logId:$logId,withBackground:$withBackground, withBorder:$withBorder ,type:$type, text:$text, imageUrl:$imageUrl, stretched:$stretched, caption:$caption, embed:$embed, height:$height, service:$service, source:$source, width:$width, level:$level){
+      id
+      type
+      logId
+      data {
+        text
+        file {
+          url
+        }
+      }
+    }
+  }
+`
+
 
 const Container = styled.div`
     width:90%;
@@ -168,7 +197,7 @@ class PostNewLog extends React.Component {
         const { title, file } = this.state;
         const time = new Date().getTime().toString();
         const userId = decodeToken();
-        const { addNewLogMutation } = this.props;
+        const { addNewLogMutation, addBlock } = this.props;
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', 'ndp6lsvf')
@@ -189,16 +218,76 @@ class PostNewLog extends React.Component {
         })
             .then(res => {
                 const logId = res.data.addNewLog.id;
+                editor.save().then(outputData => {
+                    const blocks = outputData.blocks;
+                    console.log('outputdata:', outputData)
 
+                    blocks.map(async block => {
+                        if (block.type === "image") {
+                            const { url } = block.data.file;
+                            const { caption, stretched, withBackground, withBorder } = block.data;
+                            const variables = {
+                                logId,
+                                type: "image",
+                                imageUrl: url,
+                                stretched,
+                                caption,
+                                withBackground,
+                                withBorder
+                            }
+                            await addBlock({
+                                variables
+                            })
+                        } else if (block.type === "paragraph") {
+                            const { text } = block.data;
+                            const variables = {
+                                logId,
+                                type: "paragraph",
+                                text
+                            }
+                            await addBlock({
+                                variables
+                            })
+                        } else if (block.type === "header") {
+                            const { text, level } = block.data;
+                            const variables = {
+                                logId,
+                                type: "header",
+                                text,
+                                level
+                            }
+                            await addBlock({
+                                variables
+                            })
+                        } else if (block.type === 'embed') {
+                            const { service, source, embed, caption, height, width } = block.data;
+                            const variables = {
+                                logId,
+                                type: "embed",
+                                service,
+                                source,
+                                embed,
+                                caption,
+                                height,
+                                width
+                            }
+                            await addBlock({
+                                variables
+                            })
+                        }
+                    })
+                    window.location.href = "/"
+                })
             })
             .catch(err => console.error(err))
 
-        editor.save().then(outputData => console.log(outputData))
+
     }
 }
 
 export default compose(
-    graphql(addNewLogMutation, { name: 'addNewLogMutation' })
+    graphql(addNewLogMutation, { name: 'addNewLogMutation' }),
+    graphql(addBlock, { name: 'addBlock' })
 )(PostNewLog)
 
 
