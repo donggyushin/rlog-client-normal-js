@@ -14,6 +14,7 @@ import { compose } from 'redux';
 import LinkTool from '@editorjs/link'
 
 import axios from 'axios'
+import LoadingComponent from 'components/global/loadingComponent';
 
 dotenv.config();
 
@@ -22,8 +23,8 @@ dotenv.config();
 let editor
 
 const addNewLogMutation = gql`
-mutation($title:String!, $userId:String!, $image:String, $time:String) {
-    addNewLog(title:$title, userId:$userId, image:$image, time:$time){
+mutation($title:String!, $userId:String!, $image:String, $time:String, $privateAsArgs:Boolean) {
+    addNewLog(title:$title, userId:$userId, image:$image, time:$time, privateAsArgs:$privateAsArgs){
       id 
       logData {
         id
@@ -74,7 +75,19 @@ const Container = styled.div`
 
 const Editor = styled.div``
 
-const Button = styled.button``
+const Button = styled.button`
+    position: fixed;
+    bottom: 100px;
+    left: 50px;
+    z-index:2;
+`
+
+const TitleComponentContainer = styled.div`
+    display:flex;
+    align-items:flex-start;
+`
+
+const Select = styled.select``
 
 class PostNewLog extends React.Component {
 
@@ -83,7 +96,9 @@ class PostNewLog extends React.Component {
         title: "",
         imageUrl: "",
         imageFile: '',
-        file: null
+        file: null,
+        privateAsArgs: 'true',
+        uploading: false
     }
 
     componentDidMount() {
@@ -170,16 +185,20 @@ class PostNewLog extends React.Component {
     }
 
     render() {
-        const { loading, imageFile, title } = this.state;
+        const { loading, imageFile, title, privateAsArgs, uploading } = this.state;
         const { submitButtonClicked, handleInput, titleImageUploadButtonClicked, titleImageDeleteButtonClicked } = this;
         if (loading) {
             return "loading...."
         } else {
             return <Container>
                 <BackButton to={'/'} />
-                <TitleComponent titleImageDeleteButtonClicked={titleImageDeleteButtonClicked} titleImageUploadButtonClicked={titleImageUploadButtonClicked} imageFile={imageFile} title={title} handleInput={handleInput} />
+
+                <TitleComponent privateAsArgs={privateAsArgs} titleImageDeleteButtonClicked={titleImageDeleteButtonClicked} titleImageUploadButtonClicked={titleImageUploadButtonClicked} imageFile={imageFile} title={title} handleInput={handleInput} />
+
                 <Editor id={'editorjs'} />
                 <Button onClick={submitButtonClicked}>Submit</Button>
+                {uploading && <LoadingComponent />}
+
             </Container>
         }
 
@@ -207,7 +226,10 @@ class PostNewLog extends React.Component {
     }
 
     submitButtonClicked = () => {
-        const { title, file } = this.state;
+        this.setState({
+            uploading: true
+        })
+        const { title, file, privateAsArgs } = this.state;
         const time = new Date().getTime().toString();
         const userId = decodeToken();
         const { addNewLogMutation, addBlock } = this.props;
@@ -223,7 +245,8 @@ class PostNewLog extends React.Component {
             title,
             userId,
             image: imageUrl,
-            time
+            time,
+            privateAsArgs: privateAsArgs === 'true'
         }
 
         addNewLogMutation({
@@ -306,6 +329,7 @@ class PostNewLog extends React.Component {
                         }
                     })
                     // window.location.href = "/"
+                    window.location.href = `/log/${logId}`
                 })
             })
             .catch(err => console.error(err))

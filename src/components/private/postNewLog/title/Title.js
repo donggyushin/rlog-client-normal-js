@@ -6,6 +6,7 @@ const Container = styled.div`
     display:flex;
     justify-content:center;
     align-items:center;
+    position: relative;
 `
 
 const TitleImageContainer = styled.div`
@@ -17,6 +18,12 @@ const TitleImageContainer = styled.div`
     align-items:center;
     justify-content:center;
     margin-top:10px;
+`
+
+const Select = styled.select`
+    border: 0;
+    background: white;
+    outline:none;
 `
 
 const TitleImage = styled.img`
@@ -79,7 +86,7 @@ class TitleComponent extends React.Component {
     }
     render() {
         // const { title, titleImage, file } = this.state;
-        const { title, imageFile, handleInput, titleImageUploadButtonClicked, titleImageDeleteButtonClicked } = this.props;
+        const { title, imageFile, handleInput, titleImageUploadButtonClicked, privateAsArgs } = this.props;
         const { TitleImageDeleteButtonClicked } = this;
         return <Container>
             <TitleImageContainer>
@@ -88,7 +95,12 @@ class TitleComponent extends React.Component {
                 <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />
                 <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />
                 {imageFile && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
+
             </TitleImageContainer>
+            <Select onChange={handleInput} value={privateAsArgs} name={'privateAsArgs'}>
+                <option value={true}>private</option>
+                <option value={false}>public</option>
+            </Select>
         </Container>
     }
 

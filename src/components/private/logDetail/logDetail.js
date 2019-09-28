@@ -4,11 +4,17 @@ import { client } from 'App'
 import { gql } from 'apollo-boost'
 import { withRouter } from 'react-router-dom'
 import BlockComponent from './block';
+import BackButton from '../postNewLog/backButton';
+import { decodeToken } from 'utils/decodeToken'
+import PreviousButton from './previousButton';
+import NextButton from './nextButton';
 
 const getLog = gql`
-query Log($id:ID!){
-    log(id:$id) {
+query Log($id:ID!, $userId:String){
+    log(id:$id, userId:$userId) {
       id,
+      previousLogId
+    nextLogId
       title,
       year,
       month,
@@ -80,7 +86,7 @@ const Date = styled.div`
     position:absolute;
     right:6px;
     bottom:0px;
-    color:white;
+color:${props => props.image ? "white" : "black"};
     font-size: 12px;
     font-weight: 800;
 `
@@ -101,14 +107,20 @@ class LogDetail extends React.Component {
 
     async componentDidMount() {
         const { logId } = this.props.match.params;
+        const userId = decodeToken();
         const response = await client.query({
             query: getLog,
             variables: {
-                id: logId
+                id: logId,
+                userId
             }
         })
         console.log('response:', response)
         const log = response.data.log;
+        if (log === null) {
+            alert(`You don't have authority to access`);
+            window.location.href = "/"
+        }
         const blocks = response.data.log.logData.blocks;
         this.setState({
             loading: false,
@@ -118,22 +130,27 @@ class LogDetail extends React.Component {
 
     }
 
+
     render() {
         const { loading, log, blocks } = this.state;
         if (loading) {
             return <Container>Loading...</Container>
         } else {
             return <Container>
+                <BackButton to={'/'} text={'logs'} />
                 <TitleContainer>
                     <Title image={log.image}>{log.title}</Title>
                     {log.image && <TitleImage src={log.image} />}
-                    <Date>{log.day} {log.month} {log.year}</Date>
+                    <Date image={log.image}>{log.day} {log.month} {log.year}</Date>
                 </TitleContainer>
                 <BlocksContainer>
                     {blocks.map(block => {
                         return <BlockComponent key={block.id} block={block} />
                     })}
                 </BlocksContainer>
+                {log.previousLogId && <PreviousButton id={log.previousLogId} />}
+                {log.nextLogId && <NextButton id={log.nextLogId} />}
+
             </Container>
         }
 

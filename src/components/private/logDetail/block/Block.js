@@ -5,6 +5,7 @@ const Container = styled.div`
     display:flex;
     flex-direction:column;
     align-items:flex-start;
+    min-height:20px;
 `
 
 const YoutubeVideoContainer = styled.div`
@@ -100,6 +101,7 @@ class Block extends React.Component {
 
     render() {
         const { block } = this.props;
+        const { replaceAll } = this;
         return <Container>
             {block.type === 'embed' && <>
 
@@ -113,7 +115,7 @@ class Block extends React.Component {
                     paddingBottom: 10,
                 }}>
                     <CaptionText>
-                        {block.data.caption}
+                        {this.replaceAll(block.data.caption, "&nbsp;", " ")}
                     </CaptionText>
                 </Caption>
 
@@ -131,7 +133,8 @@ class Block extends React.Component {
             </>}
             {block.type === 'paragraph' && <>
                 <NormalText>
-                    {block.data.text}
+                    {/* {block.data.text} */}
+                    {this.replaceAll(block.data.text, "&nbsp;", " ")}
                 </NormalText>
             </>}
             {block.type === 'image' && <>
@@ -143,22 +146,26 @@ class Block extends React.Component {
                         paddingBottom: 10,
                     }}>
                         <CaptionText>
-                            {block.data.caption}
+                            {this.replaceAll(block.data.caption, "&nbsp;", " ")}
                         </CaptionText>
                     </Caption>
                 </ImageContainer>
             </>}
             {block.type === 'header' && <>
                 <HeaderContainer>
-                    {block.data.level === 1 && <h1>{block.data.text}</h1>}
-                    {block.data.level === 2 && <h2>{block.data.text}</h2>}
-                    {block.data.level === 3 && <h3>{block.data.text}</h3>}
-                    {block.data.level === 4 && <h4>{block.data.text}</h4>}
-                    {block.data.level === 5 && <h5>{block.data.text}</h5>}
-                    {block.data.level === 6 && <h6>{block.data.text}</h6>}
+                    {block.data.level === 1 && <h1>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h1>}
+                    {block.data.level === 2 && <h2>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h2>}
+                    {block.data.level === 3 && <h3>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h3>}
+                    {block.data.level === 4 && <h4>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h4>}
+                    {block.data.level === 5 && <h5>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h5>}
+                    {block.data.level === 6 && <h6>{this.replaceAll(block.data.text, "&nbsp;", " ")}</h6>}
                 </HeaderContainer>
             </>}
         </Container>
+    }
+
+    replaceAll = (str, searchStr, replaceStr) => {
+        return str.replace(new RegExp(searchStr, 'g'), replaceStr)
     }
 }
 

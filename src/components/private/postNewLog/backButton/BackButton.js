@@ -8,17 +8,18 @@ const Container = styled.div`
     left: 2%;
     cursor: pointer;
     color:black;
+    z-index:2;
 `
 
 class BackButton extends React.Component {
     render() {
-        const { to } = this.props;
+        const { to, text } = this.props;
         return <Container>
             <Link style={{
                 color: 'black',
                 textDecoration: 'none'
             }} to={to}>
-                back
+                {text ? text : "back"}
             </Link>
         </Container>
     }

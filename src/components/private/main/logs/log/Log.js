@@ -50,6 +50,7 @@ class LogComponent extends React.Component {
 
     render() {
         const { id, title, image } = this.props;
+
         return <Link style={{
             textDecoration: 'none'
         }} to={`/log/${id}`}>
@@ -59,6 +60,7 @@ class LogComponent extends React.Component {
             </Container>
         </Link>
     }
+
 }
 
 export default LogComponent

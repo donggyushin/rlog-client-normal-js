@@ -28,7 +28,7 @@ const Container = styled.div`
     display: -ms-flexbox;
     display: flex;
     flex-wrap: wrap;
-    min-width: 1267px;
+    /* min-width: 1267px; */
 
 `
 
@@ -59,8 +59,16 @@ class LogsComponent extends React.Component {
         const { logs } = this.state;
         return <Container>
             <CreateNewLog />
-            {logs.map(log => {
+            {logs.map((log, index) => {
                 const { id, title, image } = log;
+                // let previousLogId = null;
+                // let nextLogId = null;
+                // if (logs[index + 1]) {
+                //     previousLogId = logs[index + 1].id;
+                // }
+                // if (logs[index - 1]) {
+                //     nextLogId = logs[index - 1].id;
+                // }
                 return <LogComponent key={id} id={id} title={title} image={image} />
             })}
         </Container>
