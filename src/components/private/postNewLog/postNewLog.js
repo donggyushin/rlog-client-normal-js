@@ -230,6 +230,10 @@ class PostNewLog extends React.Component {
             uploading: true
         })
         const { title, file, privateAsArgs } = this.state;
+        if (title === null || title === "") {
+            alert('You need title');
+            return;
+        }
         const time = new Date().getTime().toString();
         const userId = decodeToken();
         const { addNewLogMutation, addBlock } = this.props;
