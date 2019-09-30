@@ -62,6 +62,9 @@ class SignUpComponent extends React.Component {
                 console.log(result)
                 if (result.jwt === 'Not verified') {
                     alert('Not verified account')
+                } else if (result.jwt === null) {
+                    alert('Check your email and password');
+
                 } else {
                     localStorage.setItem('jwt', result.jwt)
                     window.location.href = '/'
