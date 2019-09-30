@@ -24,7 +24,7 @@ const Container = styled.div``
 
 class AppContainer extends React.Component {
   state = {
-    isLoggedIn: localStorage.getItem('jwt') ? true : false
+    isLoggedIn: localStorage.getItem('jwt') === null ? false : true
   }
   render() {
     const { isLoggedIn } = this.state
