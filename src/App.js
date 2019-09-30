@@ -6,8 +6,17 @@ import PublicComponent from 'components/public';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks'
 
+let uri = "http://localhost:4000/graphql"
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  // dev code
+} else {
+  // production code
+  uri = "http://ec2-15-164-170-141.ap-northeast-2.compute.amazonaws.com:4000/graphql"
+}
+
 export const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
+  uri
 })
 
 

@@ -12,9 +12,9 @@ import { gql } from 'apollo-boost'
 import { graphql } from 'react-apollo'
 import { compose } from 'redux';
 import LinkTool from '@editorjs/link'
-
 import axios from 'axios'
 import LoadingComponent from 'components/global/loadingComponent';
+import uri from 'uri/uri'
 
 dotenv.config();
 
@@ -108,7 +108,7 @@ class PostNewLog extends React.Component {
                 linkTool: {
                     class: LinkTool,
                     config: {
-                        endpoint: 'http://localhost:4000/api/fetchUrl'
+                        endpoint: uri + ":4000/api/fetchUrl"
                     }
                 },
                 header: {
