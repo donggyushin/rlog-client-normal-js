@@ -18,7 +18,7 @@ import uri from 'uri/uri'
 
 dotenv.config();
 
-
+let uploadedImagesPublicIds = []
 
 let editor
 
@@ -51,9 +51,10 @@ mutation($logId:String!,
     $link:String, 
     $title :String,
     $description :String,
-    $image :String
+    $image :String,
+    $publicId:String
     ) {
-    addBlock(link:$link, title:$title, description:$description, image:$image,
+    addBlock(link:$link, title:$title, description:$description, image:$image, publicId:$publicId,
         logId:$logId,withBackground:$withBackground, withBorder:$withBorder ,type:$type, text:$text, imageUrl:$imageUrl, stretched:$stretched, caption:$caption, embed:$embed, height:$height, service:$service, source:$source, width:$width, level:$level){
       id
       type
@@ -101,6 +102,28 @@ class PostNewLog extends React.Component {
         uploading: false
     }
 
+    // async componentWillUnmount() {
+    //     uploadedImagesPublicIds.map(data => {
+    //         const { publicId, signature } = data;
+    //         const apiKey = '549695488835179'
+    //         const timestamp = new Date().getTime()
+
+    //         const xhr = new XMLHttpRequest();
+    //         const url = 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/image/destroy';
+    //         const params = `public_id=${publicId}&timestamp=${timestamp}&api_key=${apiKey}&signature=${signature}`
+    //         xhr.open('POST', url, true);
+    //         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //         xhr.onreadystatechange = function () {//Call a function when the state changes.
+    //             if (xhr.readyState == 4 && xhr.status == 200) {
+    //                 alert(xhr.responseText);
+    //             }
+    //         }
+    //         xhr.send(params)
+
+    //     })
+
+    // }
+
     componentDidMount() {
         editor = new EditorJs({
             holderId: 'editorjs',
@@ -143,11 +166,18 @@ class PostNewLog extends React.Component {
                                 xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false);
                                 xhr.send(formData);
                                 const imageResponse = JSON.parse(xhr.responseText);
+                                console.log('image response:', imageResponse)
+                                const data = {
 
+                                    publicId: imageResponse.public_id,
+                                    signature: imageResponse.signature
+                                }
+                                uploadedImagesPublicIds.push(data)
                                 return {
                                     success: 1,
                                     file: {
-                                        url: imageResponse.secure_url
+                                        url: imageResponse.secure_url,
+                                        publicId: imageResponse.public_id
                                     }
                                 }
                             },
@@ -166,10 +196,12 @@ class PostNewLog extends React.Component {
                                         xhr.send(formData);
                                         const imageResponse = JSON.parse(xhr.responseText);
                                         console.log('image response:', imageResponse)
+                                        uploadedImagesPublicIds.push(imageResponse.public_id)
                                         return {
                                             success: 1,
                                             file: {
-                                                url: imageResponse.secure_url
+                                                url: imageResponse.secure_url,
+                                                publicId: imageResponse.public_id
                                             }
                                         }
                                     })
@@ -264,7 +296,7 @@ class PostNewLog extends React.Component {
 
                     blocks.map(async block => {
                         if (block.type === "image") {
-                            const { url } = block.data.file;
+                            const { url, publicId } = block.data.file;
                             const { caption, stretched, withBackground, withBorder } = block.data;
                             const variables = {
                                 logId,
@@ -273,7 +305,8 @@ class PostNewLog extends React.Component {
                                 stretched,
                                 caption,
                                 withBackground,
-                                withBorder
+                                withBorder,
+                                publicId
                             }
                             await addBlock({
                                 variables
