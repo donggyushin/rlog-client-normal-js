@@ -15,6 +15,7 @@ import LinkTool from '@editorjs/link'
 import axios from 'axios'
 import LoadingComponent from 'components/global/loadingComponent';
 import uri from 'uri/uri'
+import { client } from 'App';
 
 dotenv.config();
 
@@ -22,9 +23,17 @@ let uploadedImagesPublicIds = []
 
 let editor
 
+const destroyImageMutation = gql`
+mutation($publicId:String!) {
+    destroyImage(publicId:$publicId){
+      ok
+    }
+  }
+`
+
 const addNewLogMutation = gql`
-mutation($title:String!, $userId:String!, $image:String, $time:String, $privateAsArgs:Boolean) {
-    addNewLog(title:$title, userId:$userId, image:$image, time:$time, privateAsArgs:$privateAsArgs){
+mutation($title:String!, $userId:String!, $image:String, $time:String, $privateAsArgs:Boolean, $imagePublicId:String) {
+    addNewLog(title:$title, userId:$userId, image:$image, time:$time, privateAsArgs:$privateAsArgs, imagePublicId:$imagePublicId){
       id 
       logData {
         id
@@ -102,27 +111,17 @@ class PostNewLog extends React.Component {
         uploading: false
     }
 
-    // async componentWillUnmount() {
-    //     uploadedImagesPublicIds.map(data => {
-    //         const { publicId, signature } = data;
-    //         const apiKey = '549695488835179'
-    //         const timestamp = new Date().getTime()
-
-    //         const xhr = new XMLHttpRequest();
-    //         const url = 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/image/destroy';
-    //         const params = `public_id=${publicId}&timestamp=${timestamp}&api_key=${apiKey}&signature=${signature}`
-    //         xhr.open('POST', url, true);
-    //         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    //         xhr.onreadystatechange = function () {//Call a function when the state changes.
-    //             if (xhr.readyState == 4 && xhr.status == 200) {
-    //                 alert(xhr.responseText);
-    //             }
-    //         }
-    //         xhr.send(params)
-
-    //     })
-
-    // }
+    async componentWillUnmount() {
+        uploadedImagesPublicIds.map(publicId => {
+            console.log('public id:', publicId)
+            client.mutate({
+                mutation: destroyImageMutation,
+                variables: {
+                    publicId
+                }
+            }).then(console.log)
+        })
+    }
 
     componentDidMount() {
         editor = new EditorJs({
@@ -172,7 +171,7 @@ class PostNewLog extends React.Component {
                                     publicId: imageResponse.public_id,
                                     signature: imageResponse.signature
                                 }
-                                uploadedImagesPublicIds.push(data)
+                                uploadedImagesPublicIds.push(imageResponse.public_id)
                                 return {
                                     success: 1,
                                     file: {
@@ -282,7 +281,8 @@ class PostNewLog extends React.Component {
             userId,
             image: imageUrl,
             time,
-            privateAsArgs: privateAsArgs === 'true'
+            privateAsArgs: privateAsArgs === 'true',
+            imagePublicId: imageResponse.public_id
         }
 
         addNewLogMutation({
