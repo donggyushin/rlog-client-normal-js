@@ -1,16 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
-import { Link } from 'react-router-dom'
-import { gql } from 'apollo-boost'
 
-const deleteALog = gql`
-mutation($logId:String!, $userId:String!) {
-    deleteALogV2(logId:$logId,userId:$userId) {
-      id
-      title
-    }
-  }
-`
 
 const Container = styled.div`
 overflow:hidden;
@@ -53,7 +43,7 @@ const Text = styled.div`
 `
 
 const TrashIcon = styled.i`
-    color:white;
+    color:${props => props.image ? "white" : "black"};
     position:absolute;
     top:10px;
     left:10px;
@@ -67,13 +57,15 @@ const TrashIcon = styled.i`
 
 class LogComponent extends React.Component {
 
+
     render() {
         const { title, image } = this.props;
         const { trashIconClicked, LogComponentClicked } = this;
         return <Container onClick={LogComponentClicked}>
-            <TrashIcon onClick={trashIconClicked} className={'fas fa-trash-alt'} />
+            <TrashIcon image={image} onClick={trashIconClicked} className={'fas fa-trash-alt'} />
             {image && <BackgroundImage src={image} />}
             <Text image={image}>{title}</Text>
+
         </Container>
 
     }
@@ -85,7 +77,9 @@ class LogComponent extends React.Component {
 
     trashIconClicked = (e) => {
         e.stopPropagation();
-        const { id } = this.props;
+        const { id, turnOnModalByClickingTrashIcon, logIdToDeleteFunc } = this.props;
+        turnOnModalByClickingTrashIcon()
+        logIdToDeleteFunc(id)
         console.log(`${id} trash icon clicked!`)
 
     }
