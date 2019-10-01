@@ -1,9 +1,16 @@
 import React from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom'
+import { gql } from 'apollo-boost'
 
-
-
+const deleteALog = gql`
+mutation($logId:String!, $userId:String!) {
+    deleteALogV2(logId:$logId,userId:$userId) {
+      id
+      title
+    }
+  }
+`
 
 const Container = styled.div`
 overflow:hidden;
@@ -45,20 +52,42 @@ const Text = styled.div`
     color:${props => props.image ? 'white' : 'black'};
 `
 
+const TrashIcon = styled.i`
+    color:white;
+    position:absolute;
+    top:10px;
+    left:10px;
+    opacity:0;
+    ${Container}:hover & {
+        opacity:1;
+        z-index:3;
+    }
+`
+
 
 class LogComponent extends React.Component {
 
     render() {
-        const { id, title, image } = this.props;
+        const { title, image } = this.props;
+        const { trashIconClicked, LogComponentClicked } = this;
+        return <Container onClick={LogComponentClicked}>
+            <TrashIcon onClick={trashIconClicked} className={'fas fa-trash-alt'} />
+            {image && <BackgroundImage src={image} />}
+            <Text image={image}>{title}</Text>
+        </Container>
 
-        return <Link style={{
-            textDecoration: 'none'
-        }} to={`/log/${id}`}>
-            <Container>
-                {image && <BackgroundImage src={image} />}
-                <Text image={image}>{title}</Text>
-            </Container>
-        </Link>
+    }
+
+    LogComponentClicked = () => {
+        const { id } = this.props;
+        window.location.href = `/log/${id}`
+    }
+
+    trashIconClicked = (e) => {
+        e.stopPropagation();
+        const { id } = this.props;
+        console.log(`${id} trash icon clicked!`)
+
     }
 
 }
