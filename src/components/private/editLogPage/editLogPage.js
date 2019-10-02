@@ -16,6 +16,42 @@ let editor
 
 let uploadedImagesPublicIds = []
 
+const addBlock = gql`
+mutation($logId:String!,
+    $type:String,
+    $text:String,
+    $imageUrl:String,
+    $stretched:Boolean,
+    $caption:String,
+    $embed:String,
+    $height:Int,
+    $service:String,
+    $source:String,
+    $width:Int,
+    $level:Int,
+    $withBackground:Boolean,
+    $withBorder:Boolean,
+    $link:String, 
+    $title :String,
+    $description :String,
+    $image :String,
+    $publicId:String
+    ) {
+    addBlock(link:$link, title:$title, description:$description, image:$image, publicId:$publicId,
+        logId:$logId,withBackground:$withBackground, withBorder:$withBorder ,type:$type, text:$text, imageUrl:$imageUrl, stretched:$stretched, caption:$caption, embed:$embed, height:$height, service:$service, source:$source, width:$width, level:$level){
+      id
+      type
+      logId
+      data {
+        text
+        file {
+          url
+        }
+      }
+    }
+  }
+`
+
 const deleteAllLogsFromLog = gql`
 mutation($logId:String!, $userId:String!) {
     deleteAllBlocksFromLog(logId:$logId, userId:$userId){
@@ -297,6 +333,102 @@ class EditLogPage extends React.Component {
                 logId,
                 userId
             }
+        })
+
+        editor.save().then(outputData => {
+            console.log('outputdata:', outputData)
+            const blocks = outputData.blocks;
+            blocks.map(async block => {
+                if (block.type === "image") {
+                    const { url, publicId } = block.data.file;
+                    const { caption, stretched, withBackground, withBorder } = block.data;
+                    const variables = {
+                        logId,
+                        type: "image",
+                        imageUrl: url,
+                        stretched,
+                        caption,
+                        withBackground,
+                        withBorder,
+                        publicId
+                    }
+                    client.mutate({
+                        mutation: addBlock,
+                        variables
+                    })
+                    // await addBlock({
+                    //     variables
+                    // })
+                } else if (block.type === "paragraph") {
+                    const { text } = block.data;
+                    const variables = {
+                        logId,
+                        type: "paragraph",
+                        text
+                    }
+                    // await addBlock({
+                    //     variables
+                    // })
+                    client.mutate({
+                        mutation: addBlock,
+                        variables
+                    })
+                } else if (block.type === "header") {
+                    const { text, level } = block.data;
+                    const variables = {
+                        logId,
+                        type: "header",
+                        text,
+                        level
+                    }
+                    // await addBlock({
+                    //     variables
+                    // })
+                    client.mutate({
+                        mutation: addBlock,
+                        variables
+                    })
+                } else if (block.type === "linkTool") {
+                    const { link } = block.data;
+                    const { description, title } = block.data.meta;
+                    const { url } = block.data.meta.image;
+                    const variables = {
+                        logId,
+                        type: "linkTool",
+                        link,
+                        title,
+                        description,
+                        image: url
+                    }
+                    // await addBlock({
+                    //     variables
+                    // })
+                    client.mutate({
+                        mutation: addBlock,
+                        variables
+                    })
+
+                } else if (block.type === 'embed') {
+                    const { service, source, embed, caption, height, width } = block.data;
+                    const variables = {
+                        logId,
+                        type: "embed",
+                        service,
+                        source,
+                        embed,
+                        caption,
+                        height,
+                        width
+                    }
+                    // await addBlock({
+                    //     variables
+                    // })
+                    client.mutate({
+                        mutation: addBlock,
+                        variables
+                    })
+                }
+            })
         })
 
         window.location.href = `/log/${logId}`
