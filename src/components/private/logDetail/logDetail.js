@@ -92,7 +92,7 @@ color:${props => props.image ? "white" : "black"};
 `
 
 const BlocksContainer = styled.div`
-    width:75%;
+    width:50%;
     margin-top:70px;
 `
 
