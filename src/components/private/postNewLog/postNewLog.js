@@ -4,6 +4,7 @@ import EditorJs from '@editorjs/editorjs';
 import Header from '@editorjs/header'
 import Embed from '@editorjs/embed'
 import ImageTool from '@editorjs/image'
+import LinkTool from '@editorjs/link'
 import TitleComponent from './title';
 import BackButton from './backButton';
 import dotenv from 'dotenv';
@@ -11,7 +12,6 @@ import { decodeToken } from 'utils/decodeToken'
 import { gql } from 'apollo-boost'
 import { graphql } from 'react-apollo'
 import { compose } from 'redux';
-import LinkTool from '@editorjs/link'
 import axios from 'axios'
 import LoadingComponent from 'components/global/loadingComponent';
 import uri from 'uri/uri'
@@ -125,7 +125,7 @@ class PostNewLog extends React.Component {
 
     componentDidMount() {
         editor = new EditorJs({
-            holderId: 'editorjs',
+            holder: 'editorjs',
             tools: {
                 linkTool: {
                     class: LinkTool,

@@ -54,15 +54,28 @@ const TrashIcon = styled.i`
     }
 `
 
+const EditIcon = styled.i`
+    color:${props => props.image ? "white" : "black"};
+    position:absolute;
+    top:10px;
+    left:36px;
+    opacity:0;
+    ${Container}:hover & {
+        opacity:1;
+        z-index:3;
+    }
+`
+
 
 class LogComponent extends React.Component {
 
 
     render() {
         const { title, image } = this.props;
-        const { trashIconClicked, LogComponentClicked } = this;
+        const { trashIconClicked, LogComponentClicked, editIconClicked } = this;
         return <Container onClick={LogComponentClicked}>
             <TrashIcon image={image} onClick={trashIconClicked} className={'fas fa-trash-alt'} />
+            <EditIcon onClick={editIconClicked} image={image} className={'far fa-edit'} />
             {image && <BackgroundImage src={image} />}
             <Text image={image}>{title}</Text>
 
@@ -73,6 +86,12 @@ class LogComponent extends React.Component {
     LogComponentClicked = () => {
         const { id } = this.props;
         window.location.href = `/log/${id}`
+    }
+
+    editIconClicked = e => {
+        e.stopPropagation();
+        const { id } = this.props;
+        window.location.href = `/edit/log/${id}`
     }
 
     trashIconClicked = (e) => {
