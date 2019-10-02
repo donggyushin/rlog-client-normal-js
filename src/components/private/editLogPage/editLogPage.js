@@ -16,6 +16,33 @@ let editor
 
 let uploadedImagesPublicIds = []
 
+const deleteAllLogsFromLog = gql`
+mutation($logId:String!, $userId:String!) {
+    deleteAllBlocksFromLog(logId:$logId, userId:$userId){
+      id
+      title
+    }
+  }
+`
+
+const changeLogImage = gql`
+mutation($id:String!, $newImage:String, $publicId:String) {
+    changeLogImage(id:$id, newImage:$newImage, publicId:$publicId){
+      id
+      image
+    }
+  }
+`
+
+const changeLogTitle = gql`
+mutation($id:String!, $newTitle:String!) {
+    changeLogTitle(id:$id, newTitle:$newTitle) {
+      id
+      title
+    }
+  }
+`
+
 const getLog = gql`
 query Log($id:ID!, $userId:String){
     log(id:$id, userId:$userId) {
@@ -63,36 +90,16 @@ query Log($id:ID!, $userId:String){
 `
 
 const Container = styled.div`
-    display:flex;
+    /* display:flex;
     flex-direction:column;
-    align-items:center;
+    align-items:center; */
+    width:90%;
 `
 
 const Editor = styled.div`
     width:100%;
 `
 
-const TitleContainer = styled.div`
-    width:50%;
-    height:200px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position: relative;
-`
-
-const Title = styled.div`
-    position:absolute;
-    color:${props => props.image ? 'white' : 'black'};
-    font-size:20px;
-    font-weight:700;
-`
-
-const TitleImage = styled.img`
-    width:100%;
-    height:100%;
-    margin-top:10px;
-`
 
 const Date = styled.div`
     position:absolute;
@@ -102,10 +109,11 @@ color:${props => props.image ? "white" : "black"};
     font-size: 12px;
     font-weight: 800;
 `
-
-const BlocksContainer = styled.div`
-    width:75%;
-    margin-top:70px;
+const SubmitButton = styled.button`
+    position:fixed;
+    bottom:20px;
+    left:20px;
+    z-index: 3;
 `
 
 
@@ -125,10 +133,6 @@ class EditLogPage extends React.Component {
 
     async componentDidMount() {
 
-
-
-
-
         const { logId } = this.props.match.params;
         const userId = decodeToken();
         const response = await client.query({
@@ -145,6 +149,7 @@ class EditLogPage extends React.Component {
             window.location.href = "/"
         }
         const logData = response.data.log.logData;
+        console.log('logdata:', logData)
         editor = new EditorJs({
             holder: 'editorjs',
             tools: {
@@ -167,6 +172,7 @@ class EditLogPage extends React.Component {
                         }
                     }
                 },
+
                 image: {
                     class: ImageTool,
                     config: {
@@ -216,8 +222,10 @@ class EditLogPage extends React.Component {
                             }
                         }
                     }
-                }
-            }
+                },
+
+            },
+            data: response.data.log.logData
         })
 
         this.setState({
@@ -230,7 +238,7 @@ class EditLogPage extends React.Component {
     }
     render() {
         const { loading, log, privateAsArgs, imageFile, title } = this.state;
-        const { titleImageDeleteButtonClicked, titleImageUploadButtonClicked, handleInput } = this;
+        const { titleImageDeleteButtonClicked, titleImageUploadButtonClicked, handleInput, editButtonClicked } = this;
         if (loading) {
             return <Container>Loading....</Container>
         } else {
@@ -244,8 +252,54 @@ class EditLogPage extends React.Component {
                     privateAsArgs={privateAsArgs} titleImageDeleteButtonClicked={titleImageDeleteButtonClicked} />
 
                 <Editor id={'editorjs'} />
+                <SubmitButton onClick={editButtonClicked}>Edit</SubmitButton>
             </Container>
         }
+    }
+
+    editButtonClicked = async () => {
+        const { title, titleImageChanged, file } = this.state;
+        const { logId } = this.props.match.params;
+        const userId = decodeToken();
+        const changeLogTitleResponse = await client.mutate({
+            mutation: changeLogTitle,
+            variables: {
+                id: logId,
+                newTitle: title
+            }
+        })
+
+        // If log title changed
+        if (titleImageChanged) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'ndp6lsvf')
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
+            xhr.send(formData);
+            const imageResponse = JSON.parse(xhr.responseText);
+            const imageUrl = imageResponse.secure_url;
+            const imagePublicId = imageResponse.public_id;
+            await client.mutate({
+                mutation: changeLogImage,
+                variables: {
+                    id: logId,
+                    newImage: imageUrl,
+                    publicId: imagePublicId
+                }
+            })
+
+        }
+
+        await client.mutate({
+            mutation: deleteAllLogsFromLog,
+            variables: {
+                logId,
+                userId
+            }
+        })
+
+        window.location.href = `/log/${logId}`
     }
 
     handleInput = e => {
@@ -258,7 +312,8 @@ class EditLogPage extends React.Component {
         console.log(URL.createObjectURL(e.target.files[0]))
         this.setState({
             imageFile: URL.createObjectURL(e.target.files[0]),
-            file: e.target.files[0]
+            file: e.target.files[0],
+            titleImageChanged: true
         })
 
 
@@ -267,7 +322,8 @@ class EditLogPage extends React.Component {
     titleImageDeleteButtonClicked = () => {
         this.setState({
             imageFile: '',
-            file: null
+            file: null,
+            titleImageChanged: true
         })
     }
 }
