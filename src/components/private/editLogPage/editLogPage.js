@@ -107,6 +107,7 @@ query Log($id:ID!, $userId:String){
             text,
             file {
               url
+              publicId
             },
             stretched,
             caption,
@@ -339,8 +340,22 @@ class EditLogPage extends React.Component {
             console.log('outputdata:', outputData)
             const blocks = outputData.blocks;
             blocks.map(async block => {
+                console.log('type:', block.type)
                 if (block.type === "image") {
-                    const { url, publicId } = block.data.file;
+                    const { url, public_id, publicId } = block.data.file;
+                    console.log('block.data.file:', block.data.file);
+                    console.log('public id', publicId)
+                    let pbId = publicId;
+                    console.log('public_id:', public_id)
+                    console.log('publicId:', publicId)
+                    console.log('pbId:', pbId)
+                    if (pbId === null || pbId === undefined) {
+                        console.log('here')
+                        pbId = public_id
+                    }
+                    console.log('pbId:', pbId)
+                    console.log('when you upload image:', block.data.file)
+                    console.log(block.data)
                     const { caption, stretched, withBackground, withBorder } = block.data;
                     const variables = {
                         logId,
@@ -350,9 +365,10 @@ class EditLogPage extends React.Component {
                         caption,
                         withBackground,
                         withBorder,
-                        publicId
+                        publicId: pbId
                     }
-                    client.mutate({
+                    console.log('variables:', variables)
+                    await client.mutate({
                         mutation: addBlock,
                         variables
                     })
@@ -369,7 +385,7 @@ class EditLogPage extends React.Component {
                     // await addBlock({
                     //     variables
                     // })
-                    client.mutate({
+                    await client.mutate({
                         mutation: addBlock,
                         variables
                     })
@@ -384,7 +400,7 @@ class EditLogPage extends React.Component {
                     // await addBlock({
                     //     variables
                     // })
-                    client.mutate({
+                    await client.mutate({
                         mutation: addBlock,
                         variables
                     })
@@ -403,7 +419,7 @@ class EditLogPage extends React.Component {
                     // await addBlock({
                     //     variables
                     // })
-                    client.mutate({
+                    await client.mutate({
                         mutation: addBlock,
                         variables
                     })
@@ -423,7 +439,7 @@ class EditLogPage extends React.Component {
                     // await addBlock({
                     //     variables
                     // })
-                    client.mutate({
+                    await client.mutate({
                         mutation: addBlock,
                         variables
                     })

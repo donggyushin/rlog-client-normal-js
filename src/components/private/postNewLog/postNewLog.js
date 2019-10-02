@@ -297,6 +297,7 @@ class PostNewLog extends React.Component {
                     blocks.map(async block => {
                         if (block.type === "image") {
                             const { url, publicId } = block.data.file;
+                            console.log('public id:', publicId)
                             const { caption, stretched, withBackground, withBorder } = block.data;
                             const variables = {
                                 logId,
