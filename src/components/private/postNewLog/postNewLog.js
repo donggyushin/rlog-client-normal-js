@@ -19,6 +19,8 @@ import { client } from 'App';
 
 dotenv.config();
 
+let counter = 0;
+
 let uploadedImagesPublicIds = []
 
 let editor
@@ -235,6 +237,11 @@ class PostNewLog extends React.Component {
 
     }
 
+    sleep(delay) {
+        let start = new window.Date().getTime();
+        while (new window.Date().getTime() < start + delay);
+    }
+
     titleImageDeleteButtonClicked = () => {
         this.setState({
             imageFile: '',
@@ -254,6 +261,115 @@ class PostNewLog extends React.Component {
         this.setState({
             [e.target.name]: e.target.value
         })
+    }
+
+    requestToGraphqlServerInOrder = async (blockLength, blocks, logId) => {
+
+        console.log('here')
+        if (counter === blockLength) {
+            window.location.href = `/log/${logId}`;
+        } else {
+            const block = blocks[counter];
+            if (block.type === "image") {
+                const { url, publicId } = block.data.file;
+                console.log('public id:', publicId)
+                const { caption, stretched, withBackground, withBorder } = block.data;
+                const variables = {
+                    logId,
+                    type: "image",
+                    imageUrl: url,
+                    stretched,
+                    caption,
+                    withBackground,
+                    withBorder,
+                    publicId
+                }
+                // addBlock({
+                //     variables
+                // })
+
+                client.mutate({
+                    mutation: addBlock,
+                    variables
+                }).then(res => {
+                    counter += 1;
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId)
+                })
+
+            } else if (block.type === "paragraph") {
+                const { text } = block.data;
+                const variables = {
+                    logId,
+                    type: "paragraph",
+                    text
+                }
+                client.mutate({
+                    mutation: addBlock,
+                    variables
+                }).then(res => {
+                    counter += 1;
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId)
+                })
+
+            } else if (block.type === "header") {
+                const { text, level } = block.data;
+                const variables = {
+                    logId,
+                    type: "header",
+                    text,
+                    level
+                }
+                client.mutate({
+                    mutation: addBlock,
+                    variables
+                }).then(res => {
+                    counter += 1;
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId)
+                })
+
+            } else if (block.type === "linkTool") {
+                const { link } = block.data;
+                const { description, title } = block.data.meta;
+                const { url } = block.data.meta.image;
+                const variables = {
+                    logId,
+                    type: "linkTool",
+                    link,
+                    title,
+                    description,
+                    image: url
+                }
+                client.mutate({
+                    mutation: addBlock,
+                    variables
+                }).then(res => {
+                    counter += 1;
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId)
+                })
+
+
+            } else if (block.type === 'embed') {
+                const { service, source, embed, caption, height, width } = block.data;
+                const variables = {
+                    logId,
+                    type: "embed",
+                    service,
+                    source,
+                    embed,
+                    caption,
+                    height,
+                    width
+                }
+                client.mutate({
+                    mutation: addBlock,
+                    variables
+                }).then(res => {
+                    counter += 1;
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId)
+                })
+
+            }
+        }
     }
 
     submitButtonClicked = () => {
@@ -293,86 +409,98 @@ class PostNewLog extends React.Component {
                 editor.save().then(outputData => {
                     const blocks = outputData.blocks;
                     console.log('outputdata:', outputData)
+                    const blockLength = blocks.length;
 
-                    blocks.map(async block => {
-                        if (block.type === "image") {
-                            const { url, publicId } = block.data.file;
-                            console.log('public id:', publicId)
-                            const { caption, stretched, withBackground, withBorder } = block.data;
-                            const variables = {
-                                logId,
-                                type: "image",
-                                imageUrl: url,
-                                stretched,
-                                caption,
-                                withBackground,
-                                withBorder,
-                                publicId
-                            }
-                            await addBlock({
-                                variables
-                            })
-                        } else if (block.type === "paragraph") {
-                            const { text } = block.data;
-                            const variables = {
-                                logId,
-                                type: "paragraph",
-                                text
-                            }
-                            await addBlock({
-                                variables
-                            })
-                        } else if (block.type === "header") {
-                            const { text, level } = block.data;
-                            const variables = {
-                                logId,
-                                type: "header",
-                                text,
-                                level
-                            }
-                            await addBlock({
-                                variables
-                            })
-                        } else if (block.type === "linkTool") {
-                            const { link } = block.data;
-                            const { description, title } = block.data.meta;
-                            const { url } = block.data.meta.image;
-                            const variables = {
-                                logId,
-                                type: "linkTool",
-                                link,
-                                title,
-                                description,
-                                image: url
-                            }
-                            await addBlock({
-                                variables
-                            })
+                    this.requestToGraphqlServerInOrder(blockLength, blocks, logId);
 
-                        } else if (block.type === 'embed') {
-                            const { service, source, embed, caption, height, width } = block.data;
-                            const variables = {
-                                logId,
-                                type: "embed",
-                                service,
-                                source,
-                                embed,
-                                caption,
-                                height,
-                                width
-                            }
-                            await addBlock({
-                                variables
-                            })
-                        }
-                    })
+                    // blocks.map(async block => {
+                    //     if (block.type === "image") {
+                    //         const { url, publicId } = block.data.file;
+                    //         console.log('public id:', publicId)
+                    //         const { caption, stretched, withBackground, withBorder } = block.data;
+                    //         const variables = {
+                    //             logId,
+                    //             type: "image",
+                    //             imageUrl: url,
+                    //             stretched,
+                    //             caption,
+                    //             withBackground,
+                    //             withBorder,
+                    //             publicId
+                    //         }
+                    //         await addBlock({
+                    //             variables
+                    //         })
+                    //         this.sleep(500);
+                    //     } else if (block.type === "paragraph") {
+                    //         const { text } = block.data;
+                    //         const variables = {
+                    //             logId,
+                    //             type: "paragraph",
+                    //             text
+                    //         }
+                    //         await addBlock({
+                    //             variables
+                    //         })
+                    //         this.sleep(500);
+                    //     } else if (block.type === "header") {
+                    //         const { text, level } = block.data;
+                    //         const variables = {
+                    //             logId,
+                    //             type: "header",
+                    //             text,
+                    //             level
+                    //         }
+                    //         await addBlock({
+                    //             variables
+                    //         })
+                    //         this.sleep(500);
+                    //     } else if (block.type === "linkTool") {
+                    //         const { link } = block.data;
+                    //         const { description, title } = block.data.meta;
+                    //         const { url } = block.data.meta.image;
+                    //         const variables = {
+                    //             logId,
+                    //             type: "linkTool",
+                    //             link,
+                    //             title,
+                    //             description,
+                    //             image: url
+                    //         }
+                    //         await addBlock({
+                    //             variables
+                    //         })
+                    //         this.sleep(500);
+
+                    //     } else if (block.type === 'embed') {
+                    //         const { service, source, embed, caption, height, width } = block.data;
+                    //         const variables = {
+                    //             logId,
+                    //             type: "embed",
+                    //             service,
+                    //             source,
+                    //             embed,
+                    //             caption,
+                    //             height,
+                    //             width
+                    //         }
+                    //         await addBlock({
+                    //             variables
+                    //         })
+                    //         this.sleep(500);
+                    //     }
+                    // })
                     // window.location.href = "/"
-                    window.location.href = `/log/${logId}`
+                    // window.location.href = `/log/${logId}`
                 })
             })
             .catch(err => console.error(err))
 
 
+        this.setState({
+            uploading: false
+        })
+        // window.location.href = `/log/${logId}`
     }
 }
 

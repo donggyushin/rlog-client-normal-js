@@ -13,6 +13,9 @@ import LinkTool from '@editorjs/link'
 import uri from 'uri/uri';
 import LoadingComponent from 'components/global/loadingComponent';
 
+let isPaused = false;
+let counter = 0;
+
 let editor
 
 let uploadedImagesPublicIds = []
@@ -299,6 +302,137 @@ class EditLogPage extends React.Component {
         }
     }
 
+    requestToGraphqlServerInOrder = async (blockLength, blocks) => {
+        const { logId } = this.props.match.params;
+        if (counter === blockLength) {
+            this.setState({
+                uploading: false
+            })
+            window.location.href = `/log/${logId}`
+        } else {
+            const block = blocks[counter];
+            if (block.type === "image") {
+                const { url, public_id, publicId } = block.data.file;
+                console.log('block.data.file:', block.data.file);
+                console.log('public id', publicId)
+                let pbId = publicId;
+                console.log('public_id:', public_id)
+                console.log('publicId:', publicId)
+                console.log('pbId:', pbId)
+                if (pbId === null || pbId === undefined) {
+                    console.log('here')
+                    pbId = public_id
+                }
+                console.log('pbId:', pbId)
+                console.log('when you upload image:', block.data.file)
+                console.log(block.data)
+                const { caption, stretched, withBackground, withBorder } = block.data;
+                const variables = {
+                    logId,
+                    type: "image",
+                    imageUrl: url,
+                    stretched,
+                    caption,
+                    withBackground,
+                    withBorder,
+                    publicId: pbId
+                }
+                console.log('variables:', variables)
+                await client.mutate({
+                    mutation: addBlock,
+                    variables
+                })
+                counter += 1;
+                this.requestToGraphqlServerInOrder(blockLength, blocks);
+
+            } else if (block.type === "paragraph") {
+                const { text } = block.data;
+                const variables = {
+                    logId,
+                    type: "paragraph",
+                    text
+                }
+                // await addBlock({
+                //     variables
+                // })
+                await client.mutate({
+                    mutation: addBlock,
+                    variables
+                })
+                counter += 1;
+                this.requestToGraphqlServerInOrder(blockLength, blocks);
+
+            } else if (block.type === "header") {
+                const { text, level } = block.data;
+                const variables = {
+                    logId,
+                    type: "header",
+                    text,
+                    level
+                }
+                // await addBlock({
+                //     variables
+                // })
+                await client.mutate({
+                    mutation: addBlock,
+                    variables
+                })
+                counter += 1;
+                this.requestToGraphqlServerInOrder(blockLength, blocks);
+
+            } else if (block.type === "linkTool") {
+                const { link } = block.data;
+                const { description, title } = block.data.meta;
+                const { url } = block.data.meta.image;
+                const variables = {
+                    logId,
+                    type: "linkTool",
+                    link,
+                    title,
+                    description,
+                    image: url
+                }
+                // await addBlock({
+                //     variables
+                // })
+                await client.mutate({
+                    mutation: addBlock,
+                    variables
+                })
+
+                counter += 1;
+                this.requestToGraphqlServerInOrder(blockLength, blocks);
+
+
+            } else if (block.type === 'embed') {
+                const { service, source, embed, caption, height, width } = block.data;
+                const variables = {
+                    logId,
+                    type: "embed",
+                    service,
+                    source,
+                    embed,
+                    caption,
+                    height,
+                    width
+                }
+                // await addBlock({
+                //     variables
+                // })
+                await client.mutate({
+                    mutation: addBlock,
+                    variables
+                })
+
+                counter += 1;
+                this.requestToGraphqlServerInOrder(blockLength, blocks);
+
+
+            }
+
+        }
+    }
+
     editButtonClicked = async () => {
         this.setState({
             uploading: true
@@ -315,6 +449,8 @@ class EditLogPage extends React.Component {
             }
         })
 
+        console.log('change log title response: ', changeLogTitleResponse)
+
         // If log title changed
         if (titleImageChanged) {
             const formData = new FormData();
@@ -326,7 +462,7 @@ class EditLogPage extends React.Component {
             const imageResponse = JSON.parse(xhr.responseText);
             const imageUrl = imageResponse.secure_url;
             const imagePublicId = imageResponse.public_id;
-            await client.mutate({
+            const result = await client.mutate({
                 mutation: changeLogImage,
                 variables: {
                     id: logId,
@@ -334,6 +470,7 @@ class EditLogPage extends React.Component {
                     publicId: imagePublicId
                 }
             })
+            console.log('change title image:', result);
 
         }
 
@@ -345,120 +482,142 @@ class EditLogPage extends React.Component {
             }
         })
 
-        editor.save().then(outputData => {
+        await editor.save().then(outputData => {
             console.log('outputdata:', outputData)
             const blocks = outputData.blocks;
-            blocks.map(async block => {
-                console.log('type:', block.type)
-                if (block.type === "image") {
-                    const { url, public_id, publicId } = block.data.file;
-                    console.log('block.data.file:', block.data.file);
-                    console.log('public id', publicId)
-                    let pbId = publicId;
-                    console.log('public_id:', public_id)
-                    console.log('publicId:', publicId)
-                    console.log('pbId:', pbId)
-                    if (pbId === null || pbId === undefined) {
-                        console.log('here')
-                        pbId = public_id
-                    }
-                    console.log('pbId:', pbId)
-                    console.log('when you upload image:', block.data.file)
-                    console.log(block.data)
-                    const { caption, stretched, withBackground, withBorder } = block.data;
-                    const variables = {
-                        logId,
-                        type: "image",
-                        imageUrl: url,
-                        stretched,
-                        caption,
-                        withBackground,
-                        withBorder,
-                        publicId: pbId
-                    }
-                    console.log('variables:', variables)
-                    await client.mutate({
-                        mutation: addBlock,
-                        variables
-                    })
-                    // await addBlock({
-                    //     variables
-                    // })
-                } else if (block.type === "paragraph") {
-                    const { text } = block.data;
-                    const variables = {
-                        logId,
-                        type: "paragraph",
-                        text
-                    }
-                    // await addBlock({
-                    //     variables
-                    // })
-                    await client.mutate({
-                        mutation: addBlock,
-                        variables
-                    })
-                } else if (block.type === "header") {
-                    const { text, level } = block.data;
-                    const variables = {
-                        logId,
-                        type: "header",
-                        text,
-                        level
-                    }
-                    // await addBlock({
-                    //     variables
-                    // })
-                    await client.mutate({
-                        mutation: addBlock,
-                        variables
-                    })
-                } else if (block.type === "linkTool") {
-                    const { link } = block.data;
-                    const { description, title } = block.data.meta;
-                    const { url } = block.data.meta.image;
-                    const variables = {
-                        logId,
-                        type: "linkTool",
-                        link,
-                        title,
-                        description,
-                        image: url
-                    }
-                    // await addBlock({
-                    //     variables
-                    // })
-                    await client.mutate({
-                        mutation: addBlock,
-                        variables
-                    })
+            const blockLengths = blocks.length;
 
-                } else if (block.type === 'embed') {
-                    const { service, source, embed, caption, height, width } = block.data;
-                    const variables = {
-                        logId,
-                        type: "embed",
-                        service,
-                        source,
-                        embed,
-                        caption,
-                        height,
-                        width
-                    }
-                    // await addBlock({
-                    //     variables
-                    // })
-                    await client.mutate({
-                        mutation: addBlock,
-                        variables
-                    })
-                }
-            })
+            this.requestToGraphqlServerInOrder(blockLengths, blocks);
+
+
+
+            // blocks.map(async block => {
+            //     console.log('type:', block.type)
+            //     isPaused = true;
+            //     if (block.type === "image") {
+            //         const { url, public_id, publicId } = block.data.file;
+            //         console.log('block.data.file:', block.data.file);
+            //         console.log('public id', publicId)
+            //         let pbId = publicId;
+            //         console.log('public_id:', public_id)
+            //         console.log('publicId:', publicId)
+            //         console.log('pbId:', pbId)
+            //         if (pbId === null || pbId === undefined) {
+            //             console.log('here')
+            //             pbId = public_id
+            //         }
+            //         console.log('pbId:', pbId)
+            //         console.log('when you upload image:', block.data.file)
+            //         console.log(block.data)
+            //         const { caption, stretched, withBackground, withBorder } = block.data;
+            //         const variables = {
+            //             logId,
+            //             type: "image",
+            //             imageUrl: url,
+            //             stretched,
+            //             caption,
+            //             withBackground,
+            //             withBorder,
+            //             publicId: pbId
+            //         }
+            //         console.log('variables:', variables)
+            //         const result = await client.mutate({
+            //             mutation: addBlock,
+            //             variables
+            //         })
+
+            //     } else if (block.type === "paragraph") {
+            //         const { text } = block.data;
+            //         const variables = {
+            //             logId,
+            //             type: "paragraph",
+            //             text
+            //         }
+            //         // await addBlock({
+            //         //     variables
+            //         // })
+            //         const result = await client.mutate({
+            //             mutation: addBlock,
+            //             variables
+            //         })
+
+            //     } else if (block.type === "header") {
+            //         const { text, level } = block.data;
+            //         const variables = {
+            //             logId,
+            //             type: "header",
+            //             text,
+            //             level
+            //         }
+            //         // await addBlock({
+            //         //     variables
+            //         // })
+            //         const result = await client.mutate({
+            //             mutation: addBlock,
+            //             variables
+            //         })
+
+            //     } else if (block.type === "linkTool") {
+            //         const { link } = block.data;
+            //         const { description, title } = block.data.meta;
+            //         const { url } = block.data.meta.image;
+            //         const variables = {
+            //             logId,
+            //             type: "linkTool",
+            //             link,
+            //             title,
+            //             description,
+            //             image: url
+            //         }
+            //         // await addBlock({
+            //         //     variables
+            //         // })
+            //         const result = await client.mutate({
+            //             mutation: addBlock,
+            //             variables
+            //         })
+
+
+            //     } else if (block.type === 'embed') {
+            //         const { service, source, embed, caption, height, width } = block.data;
+            //         const variables = {
+            //             logId,
+            //             type: "embed",
+            //             service,
+            //             source,
+            //             embed,
+            //             caption,
+            //             height,
+            //             width
+            //         }
+            //         // await addBlock({
+            //         //     variables
+            //         // })
+            //         const result = await client.mutate({
+            //             mutation: addBlock,
+            //             variables
+            //         })
+
+
+            //     }
+
+
+            // })
         })
 
 
-        window.location.href = `/log/${logId}`
+        // window.location.href = `/log/${logId}`
     }
+
+
+
+    waitForIt() {
+        if (isPaused) {
+            setTimeout(() => this.waitForIt(), 100)
+        }
+    }
+
+
 
     handleInput = e => {
         this.setState({
