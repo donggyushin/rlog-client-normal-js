@@ -4,12 +4,15 @@ import styled from 'styled-components';
 const Container = styled.div`
     display:flex;
     flex-direction:column;
-    align-items:flex-start;
+    align-items:center;
     min-height:20px;
+
 `
 
 const YoutubeVideoContainer = styled.div`
-    background:black;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 `
 
 const YoutubeVideo = styled.iframe`
@@ -33,10 +36,15 @@ const NormalText = styled.div`
     font-size:15px;
     margin-bottom:20px;
     line-height: 1.8;
+    width:100%;
 `
 
 const ImageContainer = styled.div`
-    max-width:80%;
+    /* max-width:80%; */
+    display:flex;
+    flex-direction:column;
+    /* align-items:center; */
+    
 `
 
 const Image = styled.img`
@@ -45,10 +53,11 @@ const Image = styled.img`
 
 const HeaderContainer = styled.div`
     margin-bottom:20px;
+    width:100%;
 `
 
 const EmbedLinkContainer = styled.a`
-    width:650px;
+    /* width:650px; */
     padding-left:20px;
     padding-right:20px;
     padding-top:30px;
@@ -97,6 +106,8 @@ const LinkImage = styled.img`
     top:30px;
     right:30px;
 `
+
+
 
 class Block extends React.Component {
 
