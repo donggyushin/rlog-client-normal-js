@@ -447,166 +447,76 @@ class EditLogPage extends React.Component {
                 newTitle: title,
                 privateAsArg: privateAsArgs === 'true'
             }
+        }).then(() => {
+            // If log title changed
+            if (titleImageChanged) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', 'ndp6lsvf')
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
+                xhr.send(formData);
+                const imageResponse = JSON.parse(xhr.responseText);
+                const imageUrl = imageResponse.secure_url;
+                const imagePublicId = imageResponse.public_id;
+                client.mutate({
+                    mutation: changeLogImage,
+                    variables: {
+                        id: logId,
+                        newImage: imageUrl,
+                        publicId: imagePublicId
+                    }
+                }).then((result) => {
+                    console.log('change title image:', result);
+                    client.mutate({
+                        mutation: deleteAllLogsFromLog,
+                        variables: {
+                            logId,
+                            userId
+                        }
+                    }).then(() => {
+                        editor.save().then(outputData => {
+                            console.log('outputdata:', outputData)
+                            const blocks = outputData.blocks;
+                            const blockLengths = blocks.length;
+
+                            this.requestToGraphqlServerInOrder(blockLengths, blocks);
+
+                        })
+                    })
+                })
+
+
+            } else {
+                client.mutate({
+                    mutation: deleteAllLogsFromLog,
+                    variables: {
+                        logId,
+                        userId
+                    }
+                }).then(() => {
+                    editor.save().then(outputData => {
+                        console.log('outputdata:', outputData)
+                        const blocks = outputData.blocks;
+                        const blockLengths = blocks.length;
+
+                        this.requestToGraphqlServerInOrder(blockLengths, blocks);
+
+                    })
+                })
+            }
+
+
+
+
         })
 
         console.log('change log title response: ', changeLogTitleResponse)
 
-        // If log title changed
-        if (titleImageChanged) {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', 'ndp6lsvf')
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
-            xhr.send(formData);
-            const imageResponse = JSON.parse(xhr.responseText);
-            const imageUrl = imageResponse.secure_url;
-            const imagePublicId = imageResponse.public_id;
-            const result = await client.mutate({
-                mutation: changeLogImage,
-                variables: {
-                    id: logId,
-                    newImage: imageUrl,
-                    publicId: imagePublicId
-                }
-            })
-            console.log('change title image:', result);
-
-        }
-
-        await client.mutate({
-            mutation: deleteAllLogsFromLog,
-            variables: {
-                logId,
-                userId
-            }
-        })
-
-        await editor.save().then(outputData => {
-            console.log('outputdata:', outputData)
-            const blocks = outputData.blocks;
-            const blockLengths = blocks.length;
-
-            this.requestToGraphqlServerInOrder(blockLengths, blocks);
 
 
 
-            // blocks.map(async block => {
-            //     console.log('type:', block.type)
-            //     isPaused = true;
-            //     if (block.type === "image") {
-            //         const { url, public_id, publicId } = block.data.file;
-            //         console.log('block.data.file:', block.data.file);
-            //         console.log('public id', publicId)
-            //         let pbId = publicId;
-            //         console.log('public_id:', public_id)
-            //         console.log('publicId:', publicId)
-            //         console.log('pbId:', pbId)
-            //         if (pbId === null || pbId === undefined) {
-            //             console.log('here')
-            //             pbId = public_id
-            //         }
-            //         console.log('pbId:', pbId)
-            //         console.log('when you upload image:', block.data.file)
-            //         console.log(block.data)
-            //         const { caption, stretched, withBackground, withBorder } = block.data;
-            //         const variables = {
-            //             logId,
-            //             type: "image",
-            //             imageUrl: url,
-            //             stretched,
-            //             caption,
-            //             withBackground,
-            //             withBorder,
-            //             publicId: pbId
-            //         }
-            //         console.log('variables:', variables)
-            //         const result = await client.mutate({
-            //             mutation: addBlock,
-            //             variables
-            //         })
 
-            //     } else if (block.type === "paragraph") {
-            //         const { text } = block.data;
-            //         const variables = {
-            //             logId,
-            //             type: "paragraph",
-            //             text
-            //         }
-            //         // await addBlock({
-            //         //     variables
-            //         // })
-            //         const result = await client.mutate({
-            //             mutation: addBlock,
-            //             variables
-            //         })
-
-            //     } else if (block.type === "header") {
-            //         const { text, level } = block.data;
-            //         const variables = {
-            //             logId,
-            //             type: "header",
-            //             text,
-            //             level
-            //         }
-            //         // await addBlock({
-            //         //     variables
-            //         // })
-            //         const result = await client.mutate({
-            //             mutation: addBlock,
-            //             variables
-            //         })
-
-            //     } else if (block.type === "linkTool") {
-            //         const { link } = block.data;
-            //         const { description, title } = block.data.meta;
-            //         const { url } = block.data.meta.image;
-            //         const variables = {
-            //             logId,
-            //             type: "linkTool",
-            //             link,
-            //             title,
-            //             description,
-            //             image: url
-            //         }
-            //         // await addBlock({
-            //         //     variables
-            //         // })
-            //         const result = await client.mutate({
-            //             mutation: addBlock,
-            //             variables
-            //         })
-
-
-            //     } else if (block.type === 'embed') {
-            //         const { service, source, embed, caption, height, width } = block.data;
-            //         const variables = {
-            //             logId,
-            //             type: "embed",
-            //             service,
-            //             source,
-            //             embed,
-            //             caption,
-            //             height,
-            //             width
-            //         }
-            //         // await addBlock({
-            //         //     variables
-            //         // })
-            //         const result = await client.mutate({
-            //             mutation: addBlock,
-            //             variables
-            //         })
-
-
-            //     }
-
-
-            // })
-        })
-
-
-        // window.location.href = `/log/${logId}`
     }
 
 
