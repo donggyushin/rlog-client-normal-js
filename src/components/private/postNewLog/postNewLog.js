@@ -255,6 +255,7 @@ class PostNewLog extends React.Component {
             imageFile: URL.createObjectURL(e.target.files[0]),
             file: e.target.files[0]
         })
+        console.log('image file changed:', this.state.file)
     }
 
     handleInput = e => {

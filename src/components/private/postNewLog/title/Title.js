@@ -92,11 +92,13 @@ class TitleComponent extends React.Component {
             <TitleImageContainer>
                 {imageFile && <TitleImage src={imageFile} />}
                 <Title file={imageFile} onChange={handleInput} name={'title'} value={title} />
-                {edit !== true && <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />}
+                {/* {edit !== true && <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />}
                 {edit !== true && <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />}
 
-                {(imageFile && edit !== true) && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
-
+                {(imageFile && edit !== true) && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />} */}
+                <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />
+                <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />
+                {imageFile && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
             </TitleImageContainer>
             <Select onChange={handleInput} value={privateAsArgs} name={'privateAsArgs'}>
                 <option value={true}>private</option>

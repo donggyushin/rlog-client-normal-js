@@ -452,18 +452,12 @@ class EditLogPage extends React.Component {
         }).then(() => {
             // If log title changed
             if (titleImageChanged) {
+
                 const formData = new FormData();
-                // console.log('file', file);
-                // formData.append('file', file);
-                // formData.append('upload_preset', 'ndp6lsvf')
-                // const xhr = new XMLHttpRequest();
-                // xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
-                // xhr.send(formData);
-                // const imageResponse = JSON.parse(xhr.responseText);
-                // console.log("imageResponse", imageResponse)
-                // const imageUrl = imageResponse.secure_url;
-                // const imagePublicId = imageResponse.public_id;
+                console.log('file', file)
+
                 formData.append('file', file);
+
                 fetch(uri + ":4000/api/image-to-cloudinary", {
                     method: 'POST',
                     body: formData
@@ -557,13 +551,14 @@ class EditLogPage extends React.Component {
 
     titleImageUploadButtonClicked = e => {
         console.log(URL.createObjectURL(e.target.files[0]))
+        console.log('file when file changed:', e.target.files[0]);
         this.setState({
             imageFile: URL.createObjectURL(e.target.files[0]),
             file: e.target.files[0],
             titleImageChanged: true
         })
 
-
+        console.log('file changed', this.state)
     }
 
     titleImageDeleteButtonClicked = () => {
@@ -572,6 +567,7 @@ class EditLogPage extends React.Component {
             file: null,
             titleImageChanged: true
         })
+        console.log('file:', this.state.file)
     }
 }
 
