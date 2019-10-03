@@ -86,15 +86,16 @@ class TitleComponent extends React.Component {
     }
     render() {
         // const { title, titleImage, file } = this.state;
-        const { title, imageFile, handleInput, titleImageUploadButtonClicked, privateAsArgs } = this.props;
+        const { title, imageFile, handleInput, edit, titleImageUploadButtonClicked, privateAsArgs } = this.props;
         const { TitleImageDeleteButtonClicked } = this;
         return <Container>
             <TitleImageContainer>
                 {imageFile && <TitleImage src={imageFile} />}
                 <Title file={imageFile} onChange={handleInput} name={'title'} value={title} />
-                <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />
-                <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />
-                {imageFile && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
+                {edit !== true && <ImageUploadButton id={'ImageUploadButton'} onChange={titleImageUploadButtonClicked} accept="image/*" type={'file'} />}
+                {edit !== true && <ImageUploadIcon file={imageFile} className={'fas fa-plus'} />}
+
+                {(imageFile && edit !== true) && <ImageDeleteIcon onClick={TitleImageDeleteButtonClicked} className={'fas fa-plus'} />}
 
             </TitleImageContainer>
             <Select onChange={handleInput} value={privateAsArgs} name={'privateAsArgs'}>

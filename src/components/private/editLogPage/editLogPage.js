@@ -293,7 +293,9 @@ class EditLogPage extends React.Component {
                     imageFile={imageFile}
                     title={title}
                     handleInput={handleInput}
-                    privateAsArgs={privateAsArgs} titleImageDeleteButtonClicked={titleImageDeleteButtonClicked} />
+                    privateAsArgs={privateAsArgs}
+                    edit={true}
+                    titleImageDeleteButtonClicked={titleImageDeleteButtonClicked} />
 
                 <Editor id={'editorjs'} />
                 <SubmitButton onClick={editButtonClicked}>Edit</SubmitButton>
@@ -451,40 +453,58 @@ class EditLogPage extends React.Component {
             // If log title changed
             if (titleImageChanged) {
                 const formData = new FormData();
+                // console.log('file', file);
+                // formData.append('file', file);
+                // formData.append('upload_preset', 'ndp6lsvf')
+                // const xhr = new XMLHttpRequest();
+                // xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
+                // xhr.send(formData);
+                // const imageResponse = JSON.parse(xhr.responseText);
+                // console.log("imageResponse", imageResponse)
+                // const imageUrl = imageResponse.secure_url;
+                // const imagePublicId = imageResponse.public_id;
                 formData.append('file', file);
-                formData.append('upload_preset', 'ndp6lsvf')
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
-                xhr.send(formData);
-                const imageResponse = JSON.parse(xhr.responseText);
-                const imageUrl = imageResponse.secure_url;
-                const imagePublicId = imageResponse.public_id;
-                client.mutate({
-                    mutation: changeLogImage,
-                    variables: {
-                        id: logId,
-                        newImage: imageUrl,
-                        publicId: imagePublicId
-                    }
-                }).then((result) => {
-                    console.log('change title image:', result);
-                    client.mutate({
-                        mutation: deleteAllLogsFromLog,
-                        variables: {
-                            logId,
-                            userId
-                        }
-                    }).then(() => {
-                        editor.save().then(outputData => {
-                            console.log('outputdata:', outputData)
-                            const blocks = outputData.blocks;
-                            const blockLengths = blocks.length;
+                fetch(uri + ":4000/api/image-to-cloudinary", {
+                    method: 'POST',
+                    body: formData
+                }).then(res => {
+                    res.json().then(body => {
+                        const imageUrl = body.imageUrl;
+                        const imagePublicId = body.publicId;
+                        console.log('image url from server:', imageUrl);
+                        console.log('image public id from server:', imagePublicId)
+                        client.mutate({
+                            mutation: changeLogImage,
+                            variables: {
+                                id: logId,
+                                newImage: imageUrl,
+                                publicId: imagePublicId
+                            }
+                        }).then((result) => {
+                            console.log('change title image:', result);
+                            client.mutate({
+                                mutation: deleteAllLogsFromLog,
+                                variables: {
+                                    logId,
+                                    userId
+                                }
+                            }).then(() => {
+                                editor.save().then(outputData => {
+                                    console.log('outputdata:', outputData)
+                                    const blocks = outputData.blocks;
+                                    const blockLengths = blocks.length;
 
-                            this.requestToGraphqlServerInOrder(blockLengths, blocks);
+                                    this.requestToGraphqlServerInOrder(blockLengths, blocks);
 
+                                })
+                            })
                         })
                     })
+
+
+
                 })
+
 
 
             } else {

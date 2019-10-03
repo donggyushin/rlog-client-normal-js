@@ -383,14 +383,16 @@ class PostNewLog extends React.Component {
         }
         const time = new Date().getTime().toString();
         const userId = decodeToken();
-        const { addNewLogMutation, addBlock } = this.props;
+        const { addNewLogMutation } = this.props;
         const formData = new FormData();
+        console.log('file', file);
         formData.append('file', file);
         formData.append('upload_preset', 'ndp6lsvf')
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false)
         xhr.send(formData);
         const imageResponse = JSON.parse(xhr.responseText);
+        console.log('image response', imageResponse)
         const imageUrl = imageResponse.secure_url
         const variables = {
             title,
