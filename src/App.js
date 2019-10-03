@@ -19,6 +19,12 @@ export const client = new ApolloClient({
   uri
 })
 
+const AlphaTestVersion = styled.div`
+  position:absolute;
+  top:5px;
+  left:5px;
+`
+
 
 const Container = styled.div``
 
@@ -40,6 +46,9 @@ function App(props) {
   const { isLoggedIn } = props;
   return (
     <Container>
+      <AlphaTestVersion>
+        alpha test version.
+      </AlphaTestVersion>
       {isLoggedIn ? <PrivateComponent /> : <PublicComponent />}
     </Container>
   );

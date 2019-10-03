@@ -11,6 +11,7 @@ import Embed from '@editorjs/embed'
 import ImageTool from '@editorjs/image'
 import LinkTool from '@editorjs/link'
 import uri from 'uri/uri';
+import LoadingComponent from 'components/global/loadingComponent';
 
 let editor
 
@@ -71,8 +72,8 @@ mutation($id:String!, $newImage:String, $publicId:String) {
 `
 
 const changeLogTitle = gql`
-mutation($id:String!, $newTitle:String!) {
-    changeLogTitle(id:$id, newTitle:$newTitle) {
+mutation($id:String!, $newTitle:String!, $privateAsArg:Boolean) {
+    changeLogTitle(id:$id, newTitle:$newTitle, privateAsArg:$privateAsArg) {
       id
       title
     }
@@ -83,7 +84,8 @@ const getLog = gql`
 query Log($id:ID!, $userId:String){
     log(id:$id, userId:$userId) {
       id,
-      previousLogId
+      previousLogId,
+      private,
     nextLogId
       title,
       year,
@@ -270,11 +272,13 @@ class EditLogPage extends React.Component {
             log,
             logData,
             imageFile: response.data.log.image,
-            title: response.data.log.title
+            title: response.data.log.title,
+            privateAsArgs: response.data.log.private
+
         })
     }
     render() {
-        const { loading, log, privateAsArgs, imageFile, title } = this.state;
+        const { loading, log, privateAsArgs, imageFile, title, uploading } = this.state;
         const { titleImageDeleteButtonClicked, titleImageUploadButtonClicked, handleInput, editButtonClicked } = this;
         if (loading) {
             return <Container>Loading....</Container>
@@ -290,19 +294,24 @@ class EditLogPage extends React.Component {
 
                 <Editor id={'editorjs'} />
                 <SubmitButton onClick={editButtonClicked}>Edit</SubmitButton>
+                {uploading && <LoadingComponent />}
             </Container>
         }
     }
 
     editButtonClicked = async () => {
-        const { title, titleImageChanged, file } = this.state;
+        this.setState({
+            uploading: true
+        })
+        const { title, titleImageChanged, file, privateAsArgs } = this.state;
         const { logId } = this.props.match.params;
         const userId = decodeToken();
         const changeLogTitleResponse = await client.mutate({
             mutation: changeLogTitle,
             variables: {
                 id: logId,
-                newTitle: title
+                newTitle: title,
+                privateAsArg: privateAsArgs === 'true'
             }
         })
 
@@ -446,6 +455,7 @@ class EditLogPage extends React.Component {
                 }
             })
         })
+
 
         window.location.href = `/log/${logId}`
     }

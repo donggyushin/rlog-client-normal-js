@@ -25,6 +25,7 @@ const SignInButton = styled.button`
     padding-bottom: 2px;
     border-radius: 7px;
     transition:0.7s;
+    background: white;
     cursor: pointer;
     &:hover {
         color:white;
@@ -39,6 +40,7 @@ const SignUpButton = styled.button`
     padding-bottom: 2px;
     border-radius: 7px;
     transition:0.7s;
+    background: white;
     cursor: pointer;
     &:hover {
         color:white;

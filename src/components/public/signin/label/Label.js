@@ -29,6 +29,7 @@ const UnderLine = styled.input.attrs(props => ({
     text-align: center;
     font-size: 13px;
     padding-bottom: 6px;
+    background: transparent;
 `
 
 class LabelComponent extends React.Component {

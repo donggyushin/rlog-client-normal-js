@@ -8,6 +8,14 @@ import { decodeToken } from 'utils/decodeToken';
 import ModalComponent from 'components/global/Modal';
 import LoadingComponent from 'components/global/loadingComponent';
 
+const getMyLogsLength = gql`
+query($userId:String!){
+  getMyLogsLength(userId:$userId) {
+      length
+    }
+  }
+`
+
 const deleteALog = gql`
 mutation($logId:String!, $userId:String!) {
     deleteALogV2(logId:$logId,userId:$userId) {
@@ -51,11 +59,30 @@ class LogsComponent extends React.Component {
         modalTitle: "",
         modalMessage: "",
         logIdToDelete: "",
-        loadingComponent: false
+        loadingComponent: false,
+        totalLogsLength: 0,
+        loading: true,
+        currentLogsLength: 0
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('scroll', this.trackScrolling);
     }
 
     async componentDidMount() {
+
+        // To detect users scrolls to bottom of div with React js
+        document.addEventListener('scroll', this.trackScrolling);
+
+
         const userId = decodeToken();
+        const lengthData = await client.query({
+            query: getMyLogsLength,
+            variables: {
+                userId
+            }
+        })
+        const totalLogsLength = lengthData.data.getMyLogsLength.length
         const { page } = this.state;
         const response = await client.query({
             query: getMyLogs,
@@ -65,32 +92,81 @@ class LogsComponent extends React.Component {
             }
         })
         const myLogs = response.data.myLogs;
+        const currentLogsLength = response.data.myLogs.length;
         this.setState({
             logs: myLogs,
-            page: this.state.page + 1
+            page: this.state.page + 1,
+            totalLogsLength,
+            loading: false,
+            currentLogsLength
         })
+
     }
 
     render() {
-        const { logs, modal, modalMessage, modalTitle, loadingComponent } = this.state;
+        const { logs, modal, modalMessage, modalTitle, loadingComponent, loading } = this.state;
         const { turnOnModalByClickingTrashIcon, okayButtonClicked, noButtonClicked, logIdToDeleteFunc } = this;
-        return <Container>
-            <CreateNewLog />
-            {logs.map((log, index) => {
-                const { id, title, image } = log;
-                // let previousLogId = null;
-                // let nextLogId = null;
-                // if (logs[index + 1]) {
-                //     previousLogId = logs[index + 1].id;
-                // }
-                // if (logs[index - 1]) {
-                //     nextLogId = logs[index - 1].id;
-                // }
-                return <LogComponent logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
-            })}
-            {loadingComponent && <LoadingComponent />}
-            {modal && <ModalComponent okayButtonClicked={okayButtonClicked} noButtonClicked={noButtonClicked} title={modalTitle} message={modalMessage} />}
-        </Container>
+        if (loading) {
+            return "Loading...."
+        } else {
+            return <Container id={'logsContainer'}>
+                <CreateNewLog />
+                {logs.map((log, index) => {
+                    const { id, title, image } = log;
+                    // let previousLogId = null;
+                    // let nextLogId = null;
+                    // if (logs[index + 1]) {
+                    //     previousLogId = logs[index + 1].id;
+                    // }
+                    // if (logs[index - 1]) {
+                    //     nextLogId = logs[index - 1].id;
+                    // }
+                    return <LogComponent logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
+                })}
+                {loadingComponent && <LoadingComponent />}
+                {modal && <ModalComponent okayButtonClicked={okayButtonClicked} noButtonClicked={noButtonClicked} title={modalTitle} message={modalMessage} />}
+            </Container>
+        }
+    }
+
+    isBottom(el) {
+
+        return parseInt(el.getBoundingClientRect().bottom) <= window.innerHeight;
+    }
+
+    trackScrolling = async () => {
+        const wrappedElement = document.getElementById('logsContainer');
+        const { page, currentLogsLength, totalLogsLength } = this.state;
+        const userId = decodeToken();
+
+        if (this.isBottom(wrappedElement)) {
+            // I have to check there left more logs in database
+            // I have to know how many logs now I have right now,
+
+            // then I have to know how many logs I have in my server
+            // Only procceed when there left more logs than I get right now.
+            if (currentLogsLength < totalLogsLength) {
+                console.log('logs container bottom reached');
+                const newQueryResponse = await client.query({
+                    query: getMyLogs,
+                    variables: {
+                        userId,
+                        page
+                    }
+                })
+                const newMyLogs = newQueryResponse.data.myLogs;
+                const newMyLogsLength = newQueryResponse.data.myLogs.length;
+                this.setState({
+                    logs: [
+                        ...this.state.logs,
+                        newMyLogs
+                    ],
+                    page: this.state.page + 1,
+                    currentLogsLength: this.state.currentLogsLength + newMyLogsLength
+                })
+            }
+
+        }
     }
 
     turnOnModalByClickingTrashIcon = () => {
