@@ -36,7 +36,7 @@ const BackgroundImage = styled.img`
 `
 
 const Text = styled.div`
-    
+    max-width: 80%;
     font-weight:600;
     position: absolute;
     color:${props => props.image ? 'white' : 'black'};
