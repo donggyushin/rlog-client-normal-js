@@ -34,6 +34,10 @@ query MyLogs(
       id
       title
       image
+      private2
+      year
+      month
+      day
     }
   }
 `
@@ -112,7 +116,7 @@ class LogsComponent extends React.Component {
             return <Container id={'logsContainer'}>
                 <CreateNewLog />
                 {logs.map((log, index) => {
-                    const { id, title, image } = log;
+                    const { id, title, image, private2, year, month, day } = log;
                     // let previousLogId = null;
                     // let nextLogId = null;
                     // if (logs[index + 1]) {
@@ -121,7 +125,7 @@ class LogsComponent extends React.Component {
                     // if (logs[index - 1]) {
                     //     nextLogId = logs[index - 1].id;
                     // }
-                    return <LogComponent logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
+                    return <LogComponent year={year} month={month} day={day} private2={private2} logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
                 })}
                 {loadingComponent && <LoadingComponent />}
                 {modal && <ModalComponent okayButtonClicked={okayButtonClicked} noButtonClicked={noButtonClicked} title={modalTitle} message={modalMessage} />}

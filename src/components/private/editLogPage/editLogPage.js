@@ -89,6 +89,7 @@ query Log($id:ID!, $userId:String){
       id,
       previousLogId,
       private,
+      private2
     nextLogId
       title,
       year,
@@ -270,13 +271,15 @@ class EditLogPage extends React.Component {
             data: response.data.log.logData
         })
 
+        console.log('private2:', response.data.log.private2)
+
         this.setState({
             loading: false,
             log,
             logData,
             imageFile: response.data.log.image,
             title: response.data.log.title,
-            privateAsArgs: response.data.log.private
+            privateAsArgs: response.data.log.private2
 
         })
     }

@@ -66,16 +66,35 @@ const EditIcon = styled.i`
     }
 `
 
+const PrivateIcon = styled.i`
+    color:${props => props.image ? "white" : "black"};
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    
+`
+
+const Date = styled.div`
+    color:${props => props.image ? "white" : "black"};
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    z-index:2;
+    font-size:11px;
+`
+
 
 class LogComponent extends React.Component {
 
 
     render() {
-        const { title, image } = this.props;
+        const { title, image, private2, year, month, day } = this.props;
         const { trashIconClicked, LogComponentClicked, editIconClicked } = this;
         return <Container onClick={LogComponentClicked}>
             <TrashIcon image={image} onClick={trashIconClicked} className={'fas fa-trash-alt'} />
             <EditIcon onClick={editIconClicked} image={image} className={'far fa-edit'} />
+            <Date image={image}>{day} {month} {year}</Date>
+            {private2 && <PrivateIcon image={image} className={'fas fa-lock'} />}
             {image && <BackgroundImage src={image} />}
             <Text image={image}>{title}</Text>
 
