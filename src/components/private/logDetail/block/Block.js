@@ -79,6 +79,7 @@ const LinkTitle = styled.div`
     font-size: 17px;
     font-weight: 600;
     line-height: 1.5em;
+    max-width:80%;
     margin: 0 0 10px 0;
 `
 

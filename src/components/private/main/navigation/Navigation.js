@@ -19,9 +19,20 @@ const NormalText = styled.div`
     cursor: pointer;
 `
 
+const ProfilePhoto = styled.img`
+    height:40px;
+    width:40px;
+    border-radius:50%;
+    position:absolute;
+    top:1px;
+    right:10px;
+    cursor: pointer;
+`
+
 class Navigation extends React.Component {
     render() {
         const { logoutButtonClicked } = this;
+        const { profilePhoto, turnOnChangeProfileView } = this.props;
         return <Container>
             <TitleText>R log</TitleText>
             <NormalText>
@@ -30,6 +41,7 @@ class Navigation extends React.Component {
             <NormalText onClick={logoutButtonClicked}>
                 logout
             </NormalText>
+            <ProfilePhoto onClick={turnOnChangeProfileView} src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />
         </Container>
     }
 

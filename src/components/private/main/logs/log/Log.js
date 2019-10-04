@@ -79,7 +79,7 @@ const Date = styled.div`
     position:absolute;
     bottom:10px;
     right:10px;
-    z-index:2;
+    /* z-index:2; */
     font-size:11px;
 `
 
