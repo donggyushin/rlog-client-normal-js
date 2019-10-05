@@ -268,7 +268,7 @@ class PostNewLog extends React.Component {
 
         console.log('here')
         if (counter === blockLength) {
-            window.location.href = `/log/${logId}`;
+            // window.location.href = `/log/${logId}`;
         } else {
             const block = blocks[counter];
             if (block.type === "image") {
