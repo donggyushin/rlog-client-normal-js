@@ -162,6 +162,15 @@ class PostNewLog extends React.Component {
                             uploadByFile(file) {
                                 const formData = new FormData();
                                 formData.append('file', file);
+
+                                // fetch(uri + ":4000/api/image-to-cloudinary", {
+                                //     method:'POST',
+                                //     body: formData
+                                // }).then(res => {
+                                //     res.json().then(body => {
+
+                                //     })
+                                // })
                                 formData.append('upload_preset', 'ndp6lsvf');
                                 const xhr = new XMLHttpRequest();
                                 xhr.open('POST', 'https://api.cloudinary.com/v1_1/blog-naver-com-donggyu-00/upload', false);
