@@ -383,10 +383,11 @@ class PostNewLog extends React.Component {
     }
 
     submitButtonClicked = () => {
+
+        const { title, file, privateAsArgs } = this.state;
         this.setState({
             uploading: true
         })
-        const { title, file, privateAsArgs } = this.state;
         if (title === null || title === "") {
             alert('You need title');
             return;
@@ -509,9 +510,6 @@ class PostNewLog extends React.Component {
             .catch(err => console.error(err))
 
 
-        this.setState({
-            uploading: false
-        })
         // window.location.href = `/log/${logId}`
     }
 }
