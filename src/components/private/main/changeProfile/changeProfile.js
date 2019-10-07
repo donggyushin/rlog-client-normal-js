@@ -1,5 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
+import uri from 'uri/uri';
+import gql from 'graphql-tag';
+import { client } from 'App';
+import { decodeToken } from 'utils/decodeToken';
+import { getUserInfo } from '../Main';
+import LoadingComponent from 'components/global/loadingComponent';
+
+const updateUserImageProfileMutation = gql`
+mutation($id:ID!, $profileImage:String, $profileImagePublicId:String) {
+    updateUserProfileImage(id:$id, profileImage:$profileImage, profileImagePublicId:$profileImagePublicId) {
+      id
+      profilePhoto
+      profilePhotoPublicId
+    }
+  }
+`
 
 const Container = styled.div`
     position:fixed;
@@ -86,18 +102,80 @@ class ChangeProfilePhoto extends React.Component {
     state = {
         photoChanged: false,
         changePhotoImage: "",
-        newPhotoFile: null
+        newPhotoFile: null,
+        loading: false
     }
 
     render() {
         const { profilePhoto } = this.props;
+        const { inputChange, okayButtonClicked } = this;
+        const { photoChanged, changePhotoImage, loading } = this.state;
         return <Container>
             <Card ref={this.setWrapperRef}>
-                <FileInput type={'file'} accept="image/*" />
-                <Photo src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />
-                <OkayButton>Okay</OkayButton>
+                <FileInput onChange={inputChange} type={'file'} accept="image/*" />
+                {photoChanged ? <Photo src={changePhotoImage} /> : <Photo src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />}
+                {/* <Photo src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} /> */}
+                <OkayButton onClick={okayButtonClicked}>Okay</OkayButton>
             </Card>
+            {loading && <LoadingComponent />}
         </Container>
+    }
+
+    okayButtonClicked = () => {
+        this.setState({
+            loading: true
+        })
+        const { newPhotoFile, photoChanged } = this.state;
+        const { turnOffChangeProfileView, changeProfileImage } = this.props;
+        if (photoChanged === false) {
+            alert('You need to choose a new picture')
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', newPhotoFile);
+        console.log('new photo file: ', newPhotoFile);
+        fetch(uri + ":4000/api/image-to-cloudinary", {
+            method: 'POST',
+            body: formData
+        }).then(res => {
+            res.json().then(body => {
+                const profileImage = body.imageUrl;
+                const profileImagePublicId = body.publicId;
+                const id = decodeToken();
+
+                const variables = {
+                    id,
+                    profileImage,
+                    profileImagePublicId
+                }
+                client.mutate({
+                    mutation: updateUserImageProfileMutation,
+                    variables
+                    // refetchQueries: [{
+                    //     query: getUserInfo,
+                    //     variables: {
+                    //         id
+                    //     }
+                    // }]
+                }).then(result => {
+
+                    console.log("update user profile image result: ", result)
+                    const { data: { updateUserProfileImage: { profilePhoto, profilePhotoPublicId } } } = result;
+                    console.log('profilePhoto:', profilePhoto);
+                    console.log('profilePhotoPublicId:', profilePhotoPublicId);
+                    changeProfileImage(profilePhoto)
+                    turnOffChangeProfileView()
+                })
+            })
+        })
+    }
+
+    inputChange = e => {
+        this.setState({
+            photoChanged: true,
+            changePhotoImage: URL.createObjectURL(e.target.files[0]),
+            newPhotoFile: e.target.files[0]
+        })
     }
 }
 

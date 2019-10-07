@@ -7,7 +7,7 @@ import { client } from 'App';
 import { decodeToken } from 'utils/decodeToken';
 import ChangeProfilePhoto from './changeProfile';
 
-const getUserInfo = gql`
+export const getUserInfo = gql`
 query($id:ID!){
     user(id:$id) {
       name
@@ -60,12 +60,18 @@ class MainComponent extends React.Component {
 
     render() {
         const { profilePhoto, changeProfileView } = this.state;
-        const { turnOnChangeProfileView, turnOffChangeProfileView } = this;
+        const { turnOnChangeProfileView, turnOffChangeProfileView, changeProfileImage } = this;
         return <Container>
             <NavigationBar turnOnChangeProfileView={turnOnChangeProfileView} profilePhoto={profilePhoto} />
             <LogsComponent />
-            {changeProfileView && <ChangeProfilePhoto turnOffChangeProfileView={turnOffChangeProfileView} profilePhoto={profilePhoto} />}
+            {changeProfileView && <ChangeProfilePhoto changeProfileImage={changeProfileImage} turnOffChangeProfileView={turnOffChangeProfileView} profilePhoto={profilePhoto} />}
         </Container>
+    }
+
+    changeProfileImage = profileImageUrl => {
+        this.setState({
+            profilePhoto: profileImageUrl
+        })
     }
 
     turnOffChangeProfileView = () => {

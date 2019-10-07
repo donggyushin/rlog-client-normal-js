@@ -46,9 +46,9 @@ function App(props) {
   const { isLoggedIn } = props;
   return (
     <Container>
-      <AlphaTestVersion>
+      {/* <AlphaTestVersion>
         alpha test version.
-      </AlphaTestVersion>
+      </AlphaTestVersion> */}
       {isLoggedIn ? <PrivateComponent /> : <PublicComponent />}
     </Container>
   );
