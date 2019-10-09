@@ -24,7 +24,7 @@ const ProfilePhoto = styled.img`
     width:40px;
     border-radius:50%;
     position:absolute;
-    top:1px;
+    top:9px;
     right:10px;
     cursor: pointer;
 `
