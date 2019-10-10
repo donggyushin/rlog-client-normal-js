@@ -71,6 +71,7 @@ const PrivateIcon = styled.i`
     position:absolute;
     bottom:10px;
     left:10px;
+    z-index:1;
     
 `
 
