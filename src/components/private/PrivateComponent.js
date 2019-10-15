@@ -1,10 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import MainComponent from './main';
 import PostNewLog from './postNewLog';
 import LogDetail from './logDetail';
 import EditLogPage from './editLogPage';
+
 
 class PrivateComponent extends React.Component {
     render() {

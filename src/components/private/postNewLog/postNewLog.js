@@ -426,91 +426,12 @@ class PostNewLog extends React.Component {
 
                     this.requestToGraphqlServerInOrder(blockLength, blocks, logId);
 
-                    // blocks.map(async block => {
-                    //     if (block.type === "image") {
-                    //         const { url, publicId } = block.data.file;
-                    //         console.log('public id:', publicId)
-                    //         const { caption, stretched, withBackground, withBorder } = block.data;
-                    //         const variables = {
-                    //             logId,
-                    //             type: "image",
-                    //             imageUrl: url,
-                    //             stretched,
-                    //             caption,
-                    //             withBackground,
-                    //             withBorder,
-                    //             publicId
-                    //         }
-                    //         await addBlock({
-                    //             variables
-                    //         })
-                    //         this.sleep(500);
-                    //     } else if (block.type === "paragraph") {
-                    //         const { text } = block.data;
-                    //         const variables = {
-                    //             logId,
-                    //             type: "paragraph",
-                    //             text
-                    //         }
-                    //         await addBlock({
-                    //             variables
-                    //         })
-                    //         this.sleep(500);
-                    //     } else if (block.type === "header") {
-                    //         const { text, level } = block.data;
-                    //         const variables = {
-                    //             logId,
-                    //             type: "header",
-                    //             text,
-                    //             level
-                    //         }
-                    //         await addBlock({
-                    //             variables
-                    //         })
-                    //         this.sleep(500);
-                    //     } else if (block.type === "linkTool") {
-                    //         const { link } = block.data;
-                    //         const { description, title } = block.data.meta;
-                    //         const { url } = block.data.meta.image;
-                    //         const variables = {
-                    //             logId,
-                    //             type: "linkTool",
-                    //             link,
-                    //             title,
-                    //             description,
-                    //             image: url
-                    //         }
-                    //         await addBlock({
-                    //             variables
-                    //         })
-                    //         this.sleep(500);
 
-                    //     } else if (block.type === 'embed') {
-                    //         const { service, source, embed, caption, height, width } = block.data;
-                    //         const variables = {
-                    //             logId,
-                    //             type: "embed",
-                    //             service,
-                    //             source,
-                    //             embed,
-                    //             caption,
-                    //             height,
-                    //             width
-                    //         }
-                    //         await addBlock({
-                    //             variables
-                    //         })
-                    //         this.sleep(500);
-                    //     }
-                    // })
-                    // window.location.href = "/"
-                    // window.location.href = `/log/${logId}`
                 })
             })
             .catch(err => console.error(err))
 
 
-        // window.location.href = `/log/${logId}`
     }
 }
 

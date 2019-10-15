@@ -102,10 +102,21 @@ class LogDetail extends React.Component {
     state = {
         loading: true,
         log: {},
-        blocks: []
+        blocks: [],
+        k: 'private'
     }
 
     async componentDidMount() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const k = urlParams.get('k');
+        if (k) {
+            this.setState({
+                k
+            })
+
+        }
+
         const { logId } = this.props.match.params;
         const userId = decodeToken();
         const response = await client.query({
@@ -132,12 +143,12 @@ class LogDetail extends React.Component {
 
 
     render() {
-        const { loading, log, blocks } = this.state;
+        const { loading, log, blocks, k } = this.state;
         if (loading) {
             return <Container>Loading...</Container>
         } else {
             return <Container>
-                <BackButton to={'/'} text={'logs'} />
+                <BackButton to={k === 'public' ? `/?k=public` : "/"} text={'logs'} />
                 <TitleContainer>
                     <Title image={log.image}>{log.title}</Title>
                     {log.image && <TitleImage src={log.image} />}
@@ -148,8 +159,10 @@ class LogDetail extends React.Component {
                         return <BlockComponent key={block.id} block={block} />
                     })}
                 </BlocksContainer>
-                {log.previousLogId && <PreviousButton id={log.previousLogId} />}
-                {log.nextLogId && <NextButton id={log.nextLogId} />}
+                {k === 'private' && <>
+                    {log.previousLogId && <PreviousButton id={log.previousLogId} />}
+                    {log.nextLogId && <NextButton id={log.nextLogId} />}
+                </>}
 
             </Container>
         }

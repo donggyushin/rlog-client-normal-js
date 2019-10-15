@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
+import { decodeToken } from 'utils/decodeToken';
 
 
 const Container = styled.div`
@@ -87,13 +88,26 @@ const Date = styled.div`
 
 class LogComponent extends React.Component {
 
+    state = {
+        myId: ""
+    }
+
+    componentDidMount() {
+        this.setState({
+            myId: decodeToken()
+        })
+    }
+
 
     render() {
-        const { title, image, private2, year, month, day } = this.props;
+        const { title, image, private2, year, month, day, userId } = this.props;
+        const { myId } = this.state;
         const { trashIconClicked, LogComponentClicked, editIconClicked } = this;
+
         return <Container onClick={LogComponentClicked}>
-            <TrashIcon image={image} onClick={trashIconClicked} className={'fas fa-trash-alt'} />
-            <EditIcon onClick={editIconClicked} image={image} className={'far fa-edit'} />
+            {myId === userId && <TrashIcon image={image} onClick={trashIconClicked} className={'fas fa-trash-alt'} />}
+            {myId === userId && <EditIcon onClick={editIconClicked} image={image} className={'far fa-edit'} />}
+
             <Date image={image}>{day} {month} {year}</Date>
             {private2 && <PrivateIcon image={image} className={'fas fa-lock'} />}
             {image && <BackgroundImage src={image} />}
@@ -105,7 +119,14 @@ class LogComponent extends React.Component {
 
     LogComponentClicked = () => {
         const { id } = this.props;
-        window.location.href = `/log/${id}`
+        const urlParams = new URLSearchParams(window.location.search);
+        const k = urlParams.get('k');
+        if (k) {
+            window.location.href = `/log/${id}?k=${k}`
+        } else {
+            window.location.href = `/log/${id}`
+        }
+
     }
 
     editIconClicked = e => {

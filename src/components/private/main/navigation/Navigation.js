@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
     width: 90%;
@@ -17,6 +18,7 @@ const TitleText = styled.div`
 
 const NormalText = styled.div`
     cursor: pointer;
+    color:black;
 `
 
 const ProfilePhoto = styled.img`
@@ -30,14 +32,41 @@ const ProfilePhoto = styled.img`
 `
 
 class Navigation extends React.Component {
+
+    state = {
+        k: 'private'
+    }
+
+    componentDidMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const k = urlParams.get('k');
+        if (k) {
+            this.setState({
+                k
+            })
+        }
+    }
+
     render() {
         const { logoutButtonClicked } = this;
+        const { k } = this.state;
         const { profilePhoto, turnOnChangeProfileView } = this.props;
         return <Container>
             <TitleText>R log</TitleText>
-            <NormalText>
-                profile
+            {k === 'private' ? <a style={{
+                textDecoration: 'none',
+            }} href={'/?k=public'}>
+                <NormalText>
+                    public
             </NormalText>
+            </a> : <a style={{
+                textDecoration: 'none',
+            }} href={'/'}>
+                    <NormalText>
+                        private
+            </NormalText>
+                </a>}
+
             <NormalText onClick={logoutButtonClicked}>
                 logout
             </NormalText>

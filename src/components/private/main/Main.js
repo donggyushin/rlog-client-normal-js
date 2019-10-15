@@ -32,6 +32,16 @@ class MainComponent extends React.Component {
 
 
     componentDidMount() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('k');
+
+        if (myParam) {
+            this.setState({
+                k: myParam
+            })
+        }
+
         const userId = decodeToken();
         client.query({
             query: getUserInfo,
@@ -45,7 +55,8 @@ class MainComponent extends React.Component {
                 email,
                 name,
                 phone,
-                profilePhoto
+                profilePhoto,
+                loading: false
             })
         }).catch(err => console.error(err))
     }
@@ -55,16 +66,21 @@ class MainComponent extends React.Component {
         email: "",
         phone: "",
         profilePhoto: "",
-        changeProfileView: false
+        changeProfileView: false,
+        k: "",
+        loading: true
     }
 
     render() {
-        const { profilePhoto, changeProfileView } = this.state;
+        const { profilePhoto, changeProfileView, k, loading } = this.state;
         const { turnOnChangeProfileView, turnOffChangeProfileView, changeProfileImage } = this;
         return <Container>
-            <NavigationBar turnOnChangeProfileView={turnOnChangeProfileView} profilePhoto={profilePhoto} />
-            <LogsComponent />
-            {changeProfileView && <ChangeProfilePhoto changeProfileImage={changeProfileImage} turnOffChangeProfileView={turnOffChangeProfileView} profilePhoto={profilePhoto} />}
+            {loading ? 'loading... ' : <>
+
+                <NavigationBar turnOnChangeProfileView={turnOnChangeProfileView} profilePhoto={profilePhoto} />
+                <LogsComponent k={k} />
+                {changeProfileView && <ChangeProfilePhoto changeProfileImage={changeProfileImage} turnOffChangeProfileView={turnOffChangeProfileView} profilePhoto={profilePhoto} />}
+            </>}
         </Container>
     }
 

@@ -8,6 +8,29 @@ import { decodeToken } from 'utils/decodeToken';
 import ModalComponent from 'components/global/Modal';
 import LoadingComponent from 'components/global/loadingComponent';
 
+const getAllPublicLogs = gql`
+  query($page:Int!){
+    getAllPublicLogs(page:$page){
+        id
+        title
+        image
+        private2
+        year
+        month
+        day
+        userId
+    }
+  }
+`
+
+const getAllPublicLogsLength = gql`
+  {
+    getAllPublicLogsLength{
+      length
+    }
+  }
+`
+
 const getMyLogsLength = gql`
 query($userId:String!){
   getMyLogsLength(userId:$userId) {
@@ -38,6 +61,7 @@ query MyLogs(
       year
       month
       day
+      userId
     }
   }
 `
@@ -66,7 +90,7 @@ class LogsComponent extends React.Component {
         loadingComponent: false,
         totalLogsLength: 0,
         loading: true,
-        currentLogsLength: 0
+        currentLogsLength: 0,
     }
 
     componentWillUnmount() {
@@ -78,32 +102,65 @@ class LogsComponent extends React.Component {
         // To detect users scrolls to bottom of div with React js
         document.addEventListener('scroll', this.trackScrolling);
 
+        const { k } = this.props;
+        if (k === 'public') {
+            // Get all logs except for private logs
 
-        const userId = decodeToken();
-        const lengthData = await client.query({
-            query: getMyLogsLength,
-            variables: {
-                userId
-            }
-        })
-        const totalLogsLength = lengthData.data.getMyLogsLength.length
-        const { page } = this.state;
-        const response = await client.query({
-            query: getMyLogs,
-            variables: {
-                userId,
-                page
-            }
-        })
-        const myLogs = response.data.myLogs;
-        const currentLogsLength = response.data.myLogs.length;
-        this.setState({
-            logs: myLogs,
-            page: this.state.page + 1,
-            totalLogsLength,
-            loading: false,
-            currentLogsLength
-        })
+            // Get all public data length from server; 
+            const lengthData = await client.query({
+                query: getAllPublicLogsLength
+            })
+            const totalLogsLength = lengthData.data.getAllPublicLogsLength.length;
+            const { page } = this.state;
+            // get all pulblic logs by 50
+            const response = await client.query({
+                query: getAllPublicLogs,
+                variables: {
+                    page
+                }
+            })
+            const allPublicLogs = response.data.getAllPublicLogs;
+            const currentLogsLength = response.data.getAllPublicLogs.length;
+
+            console.log('all public logs: ', allPublicLogs)
+            this.setState({
+                logs: allPublicLogs,
+                page: this.state.page + 1,
+                totalLogsLength,
+                loading: false,
+                currentLogsLength
+            })
+        } else {
+            const userId = decodeToken();
+
+            const lengthData = await client.query({
+                query: getMyLogsLength,
+                variables: {
+                    userId
+                }
+            })
+            const totalLogsLength = lengthData.data.getMyLogsLength.length
+            const { page } = this.state;
+            const response = await client.query({
+                query: getMyLogs,
+                variables: {
+                    userId,
+                    page
+                }
+            })
+            const myLogs = response.data.myLogs;
+            const currentLogsLength = response.data.myLogs.length;
+            this.setState({
+                logs: myLogs,
+                page: this.state.page + 1,
+                totalLogsLength,
+                loading: false,
+                currentLogsLength
+            })
+        }
+
+
+
 
     }
 
@@ -116,16 +173,9 @@ class LogsComponent extends React.Component {
             return <Container id={'logsContainer'}>
                 <CreateNewLog />
                 {logs.map((log, index) => {
-                    const { id, title, image, private2, year, month, day } = log;
-                    // let previousLogId = null;
-                    // let nextLogId = null;
-                    // if (logs[index + 1]) {
-                    //     previousLogId = logs[index + 1].id;
-                    // }
-                    // if (logs[index - 1]) {
-                    //     nextLogId = logs[index - 1].id;
-                    // }
-                    return <LogComponent year={year} month={month} day={day} private2={private2} logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
+                    const { id, title, image, private2, year, month, day, userId } = log;
+
+                    return <LogComponent userId={userId} year={year} month={month} day={day} private2={private2} logIdToDeleteFunc={logIdToDeleteFunc} turnOnModalByClickingTrashIcon={turnOnModalByClickingTrashIcon} key={id} id={id} title={title} image={image} />
                 })}
                 {loadingComponent && <LoadingComponent />}
                 {modal && <ModalComponent okayButtonClicked={okayButtonClicked} noButtonClicked={noButtonClicked} title={modalTitle} message={modalMessage} />}
@@ -141,6 +191,8 @@ class LogsComponent extends React.Component {
     trackScrolling = async () => {
         const wrappedElement = document.getElementById('logsContainer');
         const { page, currentLogsLength, totalLogsLength } = this.state;
+        const { k } = this.props;
+
         const userId = decodeToken();
 
         if (this.isBottom(wrappedElement)) {
@@ -150,24 +202,49 @@ class LogsComponent extends React.Component {
             // then I have to know how many logs I have in my server
             // Only procceed when there left more logs than I get right now.
             if (currentLogsLength < totalLogsLength) {
-                console.log('logs container bottom reached');
-                const newQueryResponse = await client.query({
-                    query: getMyLogs,
-                    variables: {
-                        userId,
-                        page
-                    }
-                })
-                const newMyLogs = newQueryResponse.data.myLogs;
-                const newMyLogsLength = newQueryResponse.data.myLogs.length;
-                this.setState({
-                    logs: [
-                        ...this.state.logs,
-                        newMyLogs
-                    ],
-                    page: this.state.page + 1,
-                    currentLogsLength: this.state.currentLogsLength + newMyLogsLength
-                })
+
+                if (k === 'public') {
+                    console.log('logs container bottom reached in public logs');
+                    const newPublicLogsResponse = await client.query({
+                        query: getAllPublicLogs,
+                        variables: {
+                            page
+                        }
+                    })
+                    const newPublicLogs = newPublicLogsResponse.data.getAllPublicLogs;
+                    const newPublicLogsLength = newPublicLogs.length;
+                    this.setState({
+                        logs: [
+                            ...this.state.logs,
+                            newPublicLogs
+                        ],
+                        page: this.state.page + 1,
+                        currentLogsLength: this.state.currentLogsLength + newPublicLogsLength
+                    })
+                } else {
+
+                    console.log('logs container bottom reached in private logs');
+                    const newQueryResponse = await client.query({
+                        query: getMyLogs,
+                        variables: {
+                            userId,
+                            page
+                        }
+                    })
+                    const newMyLogs = newQueryResponse.data.myLogs;
+                    const newMyLogsLength = newQueryResponse.data.myLogs.length;
+                    this.setState({
+                        logs: [
+                            ...this.state.logs,
+                            newMyLogs
+                        ],
+                        page: this.state.page + 1,
+                        currentLogsLength: this.state.currentLogsLength + newMyLogsLength
+                    })
+                }
+
+
+
             }
 
         }
