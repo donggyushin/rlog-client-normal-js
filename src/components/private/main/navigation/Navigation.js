@@ -52,7 +52,13 @@ class Navigation extends React.Component {
         const { k } = this.state;
         const { profilePhoto, turnOnChangeProfileView } = this.props;
         return <Container>
-            <TitleText>R log</TitleText>
+            <a style={{
+                textDecoration: 'none',
+                color: 'black'
+            }} href={'/'}>
+                <TitleText>R log</TitleText>
+            </a>
+
             {k === 'private' ? <a style={{
                 textDecoration: 'none',
             }} href={'/?k=public'}>

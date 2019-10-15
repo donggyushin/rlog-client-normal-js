@@ -167,11 +167,13 @@ class LogsComponent extends React.Component {
     render() {
         const { logs, modal, modalMessage, modalTitle, loadingComponent, loading } = this.state;
         const { turnOnModalByClickingTrashIcon, okayButtonClicked, noButtonClicked, logIdToDeleteFunc } = this;
+        const { k } = this.props;
         if (loading) {
             return "Loading...."
         } else {
             return <Container id={'logsContainer'}>
-                <CreateNewLog />
+                {k !== 'public' && <CreateNewLog />}
+
                 {logs.map((log, index) => {
                     const { id, title, image, private2, year, month, day, userId } = log;
 
