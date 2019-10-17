@@ -8,13 +8,25 @@ import BackButton from '../postNewLog/backButton';
 import { decodeToken } from 'utils/decodeToken'
 import PreviousButton from './previousButton';
 import NextButton from './nextButton';
+import NameAndPhoto from './NameAndPhoto/NameAndPhoto';
+
+const getUserNameAndProfilePhoto = gql`
+query($id:ID!){
+    user(id:$id) {
+      name
+      profilePhoto
+      email
+    }
+  }
+`
 
 const getLog = gql`
 query Log($id:ID!, $userId:String){
     log(id:$id, userId:$userId) {
       id,
       previousLogId
-    nextLogId
+      userId
+      nextLogId
       title,
       year,
       month,
@@ -103,7 +115,10 @@ class LogDetail extends React.Component {
         loading: true,
         log: {},
         blocks: [],
-        k: 'private'
+        k: 'private',
+        username: "",
+        profilePhoto: "",
+        userEmail: ""
     }
 
     async componentDidMount() {
@@ -126,24 +141,37 @@ class LogDetail extends React.Component {
                 userId
             }
         })
-        console.log('response:', response)
+
         const log = response.data.log;
         if (log === null) {
             alert(`You don't have authority to access`);
             window.location.href = "/"
         }
+        const logUserId = log.userId;
+
         const blocks = response.data.log.logData.blocks;
-        this.setState({
-            loading: false,
-            log,
-            blocks
+        client.query({
+            query: getUserNameAndProfilePhoto,
+            variables: {
+                id: logUserId
+            }
+        }).then(res => {
+            console.log("response: ", res)
+            this.setState({
+                loading: false,
+                log,
+                blocks,
+                username: res.data.user.name,
+                profilePhoto: res.data.user.profilePhoto,
+                userEmail: res.data.user.email
+            })
         })
 
     }
 
 
     render() {
-        const { loading, log, blocks, k } = this.state;
+        const { loading, log, blocks, k, username, profilePhoto, userEmail } = this.state;
         if (loading) {
             return <Container>Loading...</Container>
         } else {
@@ -154,6 +182,7 @@ class LogDetail extends React.Component {
                     {log.image && <TitleImage src={log.image} />}
                     <Date image={log.image}>{log.day} {log.month} {log.year}</Date>
                 </TitleContainer>
+                <NameAndPhoto userEmail={userEmail} username={username} profilePhoto={profilePhoto} />
                 <BlocksContainer>
                     {blocks.map(block => {
                         return <BlockComponent key={block.id} block={block} />
