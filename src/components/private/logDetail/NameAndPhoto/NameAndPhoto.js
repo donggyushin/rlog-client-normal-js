@@ -29,7 +29,7 @@ const UserEmail = styled.div`
 `
 
 const NameAndPhoto = ({ username, profilePhoto, userEmail }) => <Container>
-    <ProfilePhoto src={profilePhoto} />
+    <ProfilePhoto src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />
     <UserName>{username}</UserName>
     <UserEmail>{userEmail}</UserEmail>
 </Container>
