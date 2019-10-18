@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.c1b338a7.chunk.css",
-    "main.js": "/static/js/main.f1b1f74b.chunk.js",
-    "main.js.map": "/static/js/main.f1b1f74b.chunk.js.map",
+    "main.js": "/static/js/main.3a546230.chunk.js",
+    "main.js.map": "/static/js/main.3a546230.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.3f89ebfe.js",
     "runtime-main.js.map": "/static/js/runtime-main.3f89ebfe.js.map",
     "static/js/2.7e46586d.chunk.js": "/static/js/2.7e46586d.chunk.js",
     "static/js/2.7e46586d.chunk.js.map": "/static/js/2.7e46586d.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.8ab5671c0ecf6ef2917d55563ca65cae.js": "/precache-manifest.8ab5671c0ecf6ef2917d55563ca65cae.js",
+    "precache-manifest.85cd358571b547eba12be30f0dba899a.js": "/precache-manifest.85cd358571b547eba12be30f0dba899a.js",
     "service-worker.js": "/service-worker.js",
     "static/css/main.c1b338a7.chunk.css.map": "/static/css/main.c1b338a7.chunk.css.map",
     "static/media/MyDoubleLucky.jpeg": "/static/media/MyDoubleLucky.38372de1.jpeg"

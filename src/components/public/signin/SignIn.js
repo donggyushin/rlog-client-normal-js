@@ -108,7 +108,8 @@ class SignInComponent extends React.Component {
             })
             .then(user => {
                 const { id } = user;
-                window.location.href = `/verify/${id}`
+                window.location.href = `/signin`
+                // window.location.href = `/verify/${id}`
             })
             .catch(err => {
                 console.error(err.message)
