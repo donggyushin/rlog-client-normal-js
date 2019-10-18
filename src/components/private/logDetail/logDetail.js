@@ -182,9 +182,9 @@ class LogDetail extends React.Component {
                 <TitleContainer>
                     <Title image={log.image}>{log.title}</Title>
                     {log.image && <TitleImage src={log.image} />}
-                    <Date image={log.image}>{log.day} {log.month} {log.year}</Date>
+                    {/* <Date image={log.image}>{log.day} {log.month} {log.year}</Date> */}
                 </TitleContainer>
-                <NameAndPhoto userEmail={userEmail} username={username} profilePhoto={profilePhoto} />
+                <NameAndPhoto userEmail={userEmail} year={log.year} month={log.month} day={log.day} username={username} profilePhoto={profilePhoto} />
                 <BlocksContainer>
                     {blocks.map(block => {
                         return <BlockComponent key={block.id} block={block} />

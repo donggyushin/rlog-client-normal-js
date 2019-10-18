@@ -7,6 +7,7 @@ const Container = styled.div`
     width: 50%;
     margin-top: 20px;
     margin-bottom: 10px;
+    position: relative;
 `
 
 const ProfilePhoto = styled.img`
@@ -35,12 +36,27 @@ const NameAndEmailContainer = styled.div`
     flex-direction:column;
 `
 
-const NameAndPhoto = ({ username, profilePhoto, userEmail }) => <Container>
-    <ProfilePhoto src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />
-    <NameAndEmailContainer>
-        <UserName>{username}</UserName>
-        <UserEmail>{userEmail}</UserEmail>
-    </NameAndEmailContainer>
-</Container>
+const Date = styled.div`
+    position:absolute;
+    bottom:6px;
+    right:0px;
+    
+    font-size:14px;
+font-style:normal;
+font-weight:300;
+`
+
+const NameAndPhoto = ({ username, profilePhoto, userEmail,
+    year,
+    month,
+    day,
+}) => <Container>
+        <ProfilePhoto src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />
+        <NameAndEmailContainer>
+            <UserName>{username}</UserName>
+            <UserEmail>{userEmail}</UserEmail>
+        </NameAndEmailContainer>
+        <Date>{day} {month} {year}</Date>
+    </Container>
 
 export default NameAndPhoto

@@ -30,12 +30,15 @@ const CaptionText = styled.div`
     margin-left:20px;
     margin-right:20px;
     font-size:14px;
+    font-family: 'Roboto', sans-serif;
+font-family: 'Nanum Gothic', sans-serif;
 `
 
 const NormalText = styled.div`
     
     margin-bottom:20px;
-    
+    font-family: 'Roboto', sans-serif;
+font-family: 'Nanum Gothic', sans-serif;
     width:100%;
     font-size:20px;
     font-style:normal;
