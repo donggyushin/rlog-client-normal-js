@@ -92,6 +92,7 @@ const TitleImage = styled.img`
     width:100%;
     height:100%;
     margin-top:10px;
+    object-fit:cover;
 `
 
 const Date = styled.div`

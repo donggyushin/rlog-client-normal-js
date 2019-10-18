@@ -24,6 +24,7 @@ const Container = styled.div`
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.75);
+    z-index:3;
     color:white;
     display:flex;
     flex-direction:column;
@@ -115,7 +116,7 @@ class ChangeProfilePhoto extends React.Component {
                 <FileInput onChange={inputChange} type={'file'} accept="image/*" />
                 {photoChanged ? <Photo src={changePhotoImage} /> : <Photo src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} />}
                 {/* <Photo src={profilePhoto ? profilePhoto : 'https://images-na.ssl-images-amazon.com/images/I/91M76Va0YSL._SL1500_.jpg'} /> */}
-                <OkayButton onClick={okayButtonClicked}>Okay</OkayButton>
+                <OkayButton disabled={!photoChanged} onClick={okayButtonClicked}>Okay</OkayButton>
             </Card>
             {loading && <LoadingComponent />}
         </Container>
