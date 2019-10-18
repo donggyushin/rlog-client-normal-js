@@ -33,10 +33,15 @@ const CaptionText = styled.div`
 `
 
 const NormalText = styled.div`
-    font-size:15px;
-    margin-bottom:20px;
-    line-height: 1.8;
+    
+    /* margin-bottom:20px; */
+    
     width:100%;
+    font-size:20px;
+font-style:normal;
+font-weight:400;
+letter-spacing:normal;
+line-height:28px;
 `
 
 const ImageContainer = styled.div`

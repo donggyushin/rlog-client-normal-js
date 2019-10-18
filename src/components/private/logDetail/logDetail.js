@@ -86,6 +86,7 @@ const Title = styled.div`
     color:${props => props.image ? 'white' : 'black'};
     font-size:20px;
     font-weight:700;
+    font-family: 'Jomolhari', serif;
 `
 
 const TitleImage = styled.img`

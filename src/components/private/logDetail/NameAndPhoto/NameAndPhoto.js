@@ -18,14 +18,16 @@ const ProfilePhoto = styled.img`
 `
 
 const UserName = styled.div`
-    font-size: 18px;
-    font-weight: 500;
     margin-right:10px;
+    font-size:16px;
+font-style:normal;
+font-weight:300;
 
 `
 
 const UserEmail = styled.div`
     font-weight:200;
+    font-size: 13px;
 `
 
 const NameAndEmailContainer = styled.div`
