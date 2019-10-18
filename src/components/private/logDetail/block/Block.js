@@ -36,7 +36,7 @@ font-family: 'Nanum Gothic', sans-serif;
 
 const NormalText = styled.div`
     
-    margin-bottom:20px;
+    margin-bottom:19px;
     font-family: 'Roboto', sans-serif;
 font-family: 'Nanum Gothic', sans-serif;
     width:100%;
