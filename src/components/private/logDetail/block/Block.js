@@ -34,14 +34,14 @@ const CaptionText = styled.div`
 
 const NormalText = styled.div`
     
-    /* margin-bottom:20px; */
+    margin-bottom:20px;
     
     width:100%;
     font-size:20px;
-font-style:normal;
-font-weight:400;
-letter-spacing:normal;
-line-height:28px;
+    font-style:normal;
+    font-weight:400;
+    letter-spacing:normal;
+    line-height:28px;
 `
 
 const ImageContainer = styled.div`
