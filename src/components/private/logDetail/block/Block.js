@@ -18,6 +18,7 @@ const YoutubeVideoContainer = styled.div`
 const YoutubeVideo = styled.iframe`
     width:100%;
     height:100%;
+    max-width:580px;
 `
 
 const Caption = styled.div`
@@ -25,6 +26,7 @@ border:1px solid gainsboro;
 border-radius:4px;
 margin-bottom:20px;
 width:100%;
+max-width:580px;
 `
 
 const CaptionText = styled.div`

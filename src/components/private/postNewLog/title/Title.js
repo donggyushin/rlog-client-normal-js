@@ -7,9 +7,9 @@ const Container = styled.div`
     justify-content:center;
     align-items:center;
     position: relative;
-    @media (max-width: 700px) {
+    
         flex-direction:column;
-    }
+    
 `
 
 const TitleImageContainer = styled.div`
@@ -31,9 +31,9 @@ const Select = styled.select`
     border: 0;
     background: white;
     outline:none;
-    @media (max-width: 700px) {
+    
         margin-top:30px;
-    }
+    margin-bottom:30px;
 `
 
 const TitleImage = styled.img`
