@@ -26,7 +26,11 @@ const AlphaTestVersion = styled.div`
 `
 
 
-const Container = styled.div``
+const Container = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+`
 
 class AppContainer extends React.Component {
   state = {
