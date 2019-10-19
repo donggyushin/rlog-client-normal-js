@@ -29,6 +29,9 @@ const ProfilePhoto = styled.img`
     top:9px;
     right:10px;
     cursor: pointer;
+    @media (max-width: 700px) {
+        display:none;
+    }
 `
 
 class Navigation extends React.Component {

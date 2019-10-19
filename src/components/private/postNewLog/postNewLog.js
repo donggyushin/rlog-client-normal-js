@@ -82,7 +82,7 @@ mutation($logId:String!,
 
 
 const Container = styled.div`
-    width:90%;
+    width:100%;
 `
 
 const Editor = styled.div``
@@ -92,6 +92,12 @@ const Button = styled.button`
     bottom: 100px;
     left: 50px;
     z-index:2;
+    background:white;
+    border:0;
+    font-size:15px;
+    font-weight:700;
+    cursor: pointer;
+    font-family: 'Jomolhari', serif;
 `
 
 const TitleComponentContainer = styled.div`

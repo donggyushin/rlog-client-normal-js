@@ -70,6 +70,7 @@ const Container = styled.div`
     display:flex;
     flex-direction:column;
     align-items:center;
+    width:100%;
 `
 
 const TitleContainer = styled.div`
@@ -79,6 +80,9 @@ const TitleContainer = styled.div`
     align-items:center;
     justify-content:center;
     position: relative;
+    @media (max-width: 700px) {
+        width:100%;   
+    }
 `
 
 const Title = styled.div`
@@ -93,6 +97,9 @@ const TitleImage = styled.img`
     width:100%;
     height:100%;
     margin-top:10px;
+    @media (max-width: 700px) {
+        margin-top:0px;
+    }
     object-fit:cover;
 `
 
@@ -108,6 +115,9 @@ color:${props => props.image ? "white" : "black"};
 const BlocksContainer = styled.div`
     width:50%;
     margin-top:70px;
+    @media (max-width: 700px) {
+        width:95%;   
+    }
 `
 
 

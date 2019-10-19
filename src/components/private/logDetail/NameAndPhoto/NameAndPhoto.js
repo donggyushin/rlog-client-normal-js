@@ -8,6 +8,9 @@ const Container = styled.div`
     margin-top: 20px;
     margin-bottom: 10px;
     position: relative;
+    @media (max-width: 700px) {
+        width:95%;   
+    }
 `
 
 const ProfilePhoto = styled.img`

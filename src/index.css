@@ -13,6 +13,7 @@ code {
 }
 
 
+
 .ce-block:hover {
   background-image: linear-gradient(17deg,rgba(243,248,255,.03) 63.45%,rgba(207,214,229,.27) 98%);
   border-radius: 3px;
@@ -36,4 +37,20 @@ font-family: 'Nanum Gothic', sans-serif;
     font-weight:400;
     letter-spacing:normal;
     line-height:28px;
+}
+
+
+@media (max-width: 700px) {
+  .ce-block {
+    width: 90% !important;
+  }
+
+  .codex-editor__redactor {
+    padding-bottom: 300px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+  }
+
 }

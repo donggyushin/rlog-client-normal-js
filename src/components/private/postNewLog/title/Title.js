@@ -7,6 +7,9 @@ const Container = styled.div`
     justify-content:center;
     align-items:center;
     position: relative;
+    @media (max-width: 700px) {
+        flex-direction:column;
+    }
 `
 
 const TitleImageContainer = styled.div`
@@ -18,18 +21,29 @@ const TitleImageContainer = styled.div`
     align-items:center;
     justify-content:center;
     margin-top:10px;
+    @media (max-width: 700px) {
+        width:100%;   
+        margin-top:0px;
+    }
 `
 
 const Select = styled.select`
     border: 0;
     background: white;
     outline:none;
+    @media (max-width: 700px) {
+        margin-top:30px;
+    }
 `
 
 const TitleImage = styled.img`
     width: 100%;
     height: 100%;
     border-radius: 3px;
+    @media (max-width: 700px) {
+        width:100%;   
+        margin-bottom:30px;
+    }
 `
 
 const Title = styled.input`

@@ -77,6 +77,10 @@ const Container = styled.div`
     flex-wrap: wrap;
     /* min-width: 1267px; */
 
+    @media (max-width: 700px) {
+        justify-content:center;
+    }
+
 `
 
 class LogsComponent extends React.Component {
