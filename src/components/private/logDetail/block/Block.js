@@ -24,6 +24,7 @@ const Caption = styled.div`
 border:1px solid gainsboro;
 border-radius:4px;
 margin-bottom:20px;
+width:100%;
 `
 
 const CaptionText = styled.div`
@@ -127,11 +128,11 @@ class Block extends React.Component {
             {block.type === 'embed' && <>
 
                 <YoutubeVideo style={{
-                    width: block.data.width,
+                    // width: block.data.width,
                     height: block.data.height
                 }} src={block.data.embed} />
                 <Caption style={{
-                    width: block.data.width,
+                    // width: block.data.width,
                     paddingTop: 10,
                     paddingBottom: 10,
                 }}>

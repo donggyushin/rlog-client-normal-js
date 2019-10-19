@@ -71,6 +71,7 @@ const Container = styled.div`
     flex-direction:column;
     align-items:center;
     width:100%;
+    padding-bottom:300px;
 `
 
 const TitleContainer = styled.div`
