@@ -157,6 +157,12 @@ const SubmitButton = styled.button`
     bottom:20px;
     left:20px;
     z-index: 3;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Jomolhari',serif;
+    background: white;
+    border: 0;
 `
 
 
