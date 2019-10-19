@@ -22,3 +22,18 @@ h {
   font-family: 'Roboto', sans-serif;
 font-family: 'Nanum Gothic', sans-serif;
 }
+
+.ce-header {
+  font-family: 'Roboto', sans-serif;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.ce-paragraph {
+  font-family: 'Roboto', sans-serif;
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size:19px;
+    font-style:normal;
+    font-weight:400;
+    letter-spacing:normal;
+    line-height:28px;
+}

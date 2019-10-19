@@ -36,7 +36,9 @@ const Title = styled.input`
     color:${props => props.file ? 'white' : 'black'};
     position: absolute;
     border: 0;
-    font-size: 20px;
+    font-size:20px;
+    font-weight:700;
+    font-family: 'Jomolhari', serif;
     text-align: center;
     border-bottom: ${props => props.file ? '0px' : '1px solid black'};
     width: 48%;
