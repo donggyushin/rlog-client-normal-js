@@ -48,6 +48,9 @@ font-family: 'Nanum Gothic', sans-serif;
     font-weight:400;
     letter-spacing:normal;
     line-height:28px;
+    @media (max-width: 700px) {
+        width:90%;
+    }
 `
 
 const ImageContainer = styled.div`
@@ -65,6 +68,12 @@ const Image = styled.img`
 const HeaderContainer = styled.div`
     margin-bottom:20px;
     width:100%;
+    font-family: 'Jomolhari',serif;
+    @media (max-width: 700px) {
+        width:90%; 
+    }
+    
+    
 `
 
 const EmbedLinkContainer = styled.a`

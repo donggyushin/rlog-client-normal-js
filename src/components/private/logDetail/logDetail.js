@@ -117,7 +117,7 @@ const BlocksContainer = styled.div`
     width:50%;
     margin-top:70px;
     @media (max-width: 700px) {
-        width:95%;   
+        width:100%;   
     }
 `
 
