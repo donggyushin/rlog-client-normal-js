@@ -40,6 +40,7 @@ const TitleImage = styled.img`
     width: 100%;
     height: 100%;
     border-radius: 3px;
+    object-fit:cover;
     @media (max-width: 700px) {
         width:100%;   
         margin-bottom:30px;

@@ -26,7 +26,6 @@ border:1px solid gainsboro;
 border-radius:4px;
 margin-bottom:20px;
 width:100%;
-max-width:580px;
 `
 
 const CaptionText = styled.div`
